@@ -13,4 +13,5 @@ public class Ric implements Serializable{
 	public String getCompany(){
 		return ric.split(".")[0];
 	}
+	/**Ali - RIC = Reuters instrument code. Ex = Which stock exchange it is on. Company = company concerned */
 }
