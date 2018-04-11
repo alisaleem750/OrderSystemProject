@@ -168,12 +168,11 @@ public class OrderManager {
             return;
         }
         o.OrdStatus = '0'; //New
-        ObjectOutputStream os = new ObjectOutputStream(clients[o.clientid].getOutputStream());
+        ObjectOutputStream os = new ObjectOutputStream(clients[o.clientId].getOutputStream());
         //newOrderSingle acknowledgement
         //ClOrdId is 11=
         os.writeObject("11=" + o.clientOrderID + ";35=A;39=0");
         os.flush();
-
         price(id, o);
     }
 
@@ -196,7 +195,9 @@ public class OrderManager {
 
     private void internalCross(int id, Order o) throws IOException {
         for (Map.Entry<Integer, Order> entry : orders.entrySet()) {
-            if (entry.getKey().intValue() == id) continue;
+            if (entry.getKey().intValue() == id) {
+                continue;
+            }
             Order matchingOrder = entry.getValue();
             if (!(matchingOrder.instrument.equals(o.instrument) && matchingOrder.initialMarketPrice == o.initialMarketPrice))
                 continue;
