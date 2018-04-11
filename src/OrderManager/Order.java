@@ -8,17 +8,34 @@ import Ref.Instrument;
 public class Order implements Serializable{
 	public int id; //TODO these should all be longs
 	short orderRouter;
-	public int ClientOrderID; //TODO refactor to lowercase C
+	public int clientOrderID; //TODO refactor to lowercase C
 	int size;
 	double[]bestPrices;
 	int bestPriceCount;
+	int clientid;
+	public Instrument instrument;
+	public double initialMarketPrice;
+	ArrayList<Order>slices;
+	ArrayList<Fill>fills;
+	char OrdStatus='A'; //OrdStatus is Fix 39, 'A' is 'Pending New'
+	//Status state;
+
+	public Order(int clientId, int ClientOrderID, Instrument instrument, int size){
+		this.clientOrderID =ClientOrderID;
+		this.size=size;
+		this.clientid=clientId;
+		this.instrument=instrument;
+		fills=new ArrayList<Fill>();
+		slices=new ArrayList<Order>();
+	}
+
 	public int sliceSizes(){
 		int totalSizeOfSlices=0;
 		for(Order c:slices)totalSizeOfSlices+=c.size;
 		return totalSizeOfSlices;
 	}
 	public int newSlice(int sliceSize){
-		slices.add(new Order(id,ClientOrderID,instrument,sliceSize));
+		slices.add(new Order(id, clientOrderID,instrument,sliceSize));
 		return slices.size()-1;
 	}
 	public int sizeFilled(){
@@ -34,13 +51,7 @@ public class Order implements Serializable{
 	public int sizeRemaining(){
 		return size-sizeFilled();
 	}
-	int clientid;
-	public Instrument instrument;
-	public double initialMarketPrice;
-	ArrayList<Order>slices;
-	ArrayList<Fill>fills;
-	char OrdStatus='A'; //OrdStatus is Fix 39, 'A' is 'Pending New'
-	//Status state;
+
 	float price(){
 		//TODO this is buggy as it doesn't take account of slices. Let them fix it
 		float sum=0;
@@ -119,26 +130,9 @@ public class Order implements Serializable{
 	void cancel(){
 		//state=cancelled
 	}
-	public Order(int clientId, int ClientOrderID, Instrument instrument, int size){
-		this.ClientOrderID=ClientOrderID;
-		this.size=size;
-		this.clientid=clientId;
-		this.instrument=instrument;
-		fills=new ArrayList<Fill>();
-		slices=new ArrayList<Order>();
+
+	public char getOrdStatus(){
+		return OrdStatus;
 	}
 }
 
-class Basket{
-	Order[] orders;
-}
-
-class Fill implements Serializable{
-	//long id;
-	int size;
-	double price;
-	Fill(int size,double price){
-		this.size=size;
-		this.price=price;
-	}
-}

@@ -59,12 +59,12 @@ public class SampleClient extends Mock implements Client{
 
 	@Override
 	public void fullyFilled(Order order){show(""+order);
-		OUT_QUEUE.remove(order.ClientOrderID);
+		OUT_QUEUE.remove(order.clientOrderID);
 	}
 
 	@Override
 	public void cancelled(Order order){show(""+order);
-		OUT_QUEUE.remove(order.ClientOrderID);
+		OUT_QUEUE.remove(order.clientOrderID);
 	}
 
 	enum methods{newOrderSingleAcknowledgement,dontKnow};
@@ -78,6 +78,10 @@ public class SampleClient extends Mock implements Client{
 				while(0<omConn.getInputStream().available()){
 					is = new ObjectInputStream(omConn.getInputStream());
 					String fix=(String)is.readObject();
+					if(fix == "deleteOrder"){
+						fullyFilled((Order)is.readObject());
+						break;
+					}
 					System.out.println(Thread.currentThread().getName()+" received fix message: "+fix);
 					String[] fixTags=fix.split(";");
 					int OrderId=-1;
@@ -115,7 +119,7 @@ public class SampleClient extends Mock implements Client{
 		}
 	}
 
-	void newOrderSingleAcknowledgement(int OrderId){
+	private void newOrderSingleAcknowledgement(int OrderId){
 		System.out.println(Thread.currentThread().getName()+" called newOrderSingleAcknowledgement");
 		//do nothing, as not recording so much state in the NOS class at present
 	}
