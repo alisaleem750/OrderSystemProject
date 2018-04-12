@@ -136,7 +136,7 @@ public class Order implements Serializable{
 	}
 
 	public void setOrdStatus(char OrdStatus){
-		OrdStatus = OrdStatus;
+		this.OrdStatus = OrdStatus;
 	}
 }
 

@@ -37,7 +37,7 @@ public class Trader extends Thread implements TradeScreen{
 						case newOrder:newOrder(is.readInt(),(Order)is.readObject());break;
 						case price:price(is.readInt(),(Order)is.readObject());break;
 						case cross:is.readInt();is.readObject();break; //TODO
-						case fill: checkOrderStatus(is.readInt(),(Order)is.readObject());break; //TODO
+						case fill: fill(is.readInt(),(Order)is.readObject());break; //TODO
 					}
 				}else{
 					System.out.println("Trader Waiting for data to be available - sleep 1s");
@@ -67,11 +67,10 @@ public class Trader extends Thread implements TradeScreen{
 		os.flush();
 	}
 
-	public void checkOrderStatus(int id, Order order) throws IOException {
-		if(orders.get(id).getOrdStatus() == '2'){
-			orders.remove(id);
-			deleteOrder(id, order);
-		}
+	public void fill(int id, Order order) throws IOException, InterruptedException {
+		orders.remove(id);
+		orders.put(id, order);
+		price(id, order);
 	}
 
 	public void deleteOrder(int id, Order order) throws IOException {

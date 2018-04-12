@@ -15,7 +15,7 @@ import Ref.Ric;
 public class SampleClient extends Mock implements Client{
 	private static final Random RANDOM_NUM_GENERATOR=new Random();
 	private static final Instrument[] INSTRUMENTS={new Instrument(new Ric("VOD.L")), new Instrument(new Ric("BP.L")), new Instrument(new Ric("BT.L"))};
-	private static final HashMap OUT_QUEUE=new HashMap(); //queue for outgoing orders
+	private static final HashMap<Integer, NewOrderSingle> OUT_QUEUE=new HashMap(); //queue for outgoing orders
 	private int id=0; //message id number
 	private Socket omConn; //connection to order manager
 			
@@ -26,13 +26,14 @@ public class SampleClient extends Mock implements Client{
 	}
 	
 	@Override
-	public int sendOrder(Object par0)throws IOException{
+	public int sendOrder(Object orderType)throws IOException{
 		int size=RANDOM_NUM_GENERATOR.nextInt(5000);
+		/** Ali - below should be price, not instId */
 		int instid=RANDOM_NUM_GENERATOR.nextInt(3);
 		Instrument instrument=INSTRUMENTS[RANDOM_NUM_GENERATOR.nextInt(INSTRUMENTS.length)];
 		NewOrderSingle nos=new NewOrderSingle(size,instid,instrument);
-		
-		show("sendOrder: id="+id+" size="+size+" instrument="+INSTRUMENTS[instid].toString());
+		//show("sendOrder: id="+id+" size="+size+" instrument="+INSTRUMENTS[instid].toString());
+		show("sendOrder: id="+id+" size="+size+" instrument="+nos.instrument.toString());
 		OUT_QUEUE.put(id,nos);
 		if(omConn.isConnected()){
 			ObjectOutputStream os=new ObjectOutputStream(omConn.getOutputStream());
@@ -67,7 +68,7 @@ public class SampleClient extends Mock implements Client{
 		OUT_QUEUE.remove(order.clientOrderID);
 	}
 
-	enum methods{newOrderSingleAcknowledgement,dontKnow};
+	enum methods{newOrderSingleAcknowledgement, orderCompleteAcknowledgement,dontKnow};
 	@Override
 	public void messageHandler(){
 		
@@ -78,10 +79,10 @@ public class SampleClient extends Mock implements Client{
 				while(0<omConn.getInputStream().available()){
 					is = new ObjectInputStream(omConn.getInputStream());
 					String fix=(String)is.readObject();
-					if(fix == "deleteOrder"){
-						fullyFilled((Order)is.readObject());
-						break;
-					}
+					//if(fix == "deleteOrder"){
+						//fullyFilled((Order)is.readObject());
+						//break;
+					//}
 					System.out.println(Thread.currentThread().getName()+" received fix message: "+fix);
 					String[] fixTags=fix.split(";");
 					int OrderId=-1;
@@ -96,11 +97,15 @@ public class SampleClient extends Mock implements Client{
 							case"35":MsgType=tag_value[1].charAt(0);
 								if(MsgType=='A')whatToDo=methods.newOrderSingleAcknowledgement;
 								break;
-							case"39":OrdStatus=tag_value[1].charAt(0);break;
+							case"54"://doSomethingWithOrderBuyOrSell?
+							case"39":OrdStatus=tag_value[1].charAt(0);
+								if(OrdStatus=='2')whatToDo=methods.orderCompleteAcknowledgement;
+								break;
 						}
 					}
 					switch(whatToDo){
-						case newOrderSingleAcknowledgement:newOrderSingleAcknowledgement(OrderId);
+						case newOrderSingleAcknowledgement:newOrderSingleAcknowledgement(OrderId); break;
+						case orderCompleteAcknowledgement:orderCompleteAcknowledgement(OrderId);
 					}
 					
 					/*message=connection.getMessage();
@@ -117,6 +122,12 @@ public class SampleClient extends Mock implements Client{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	private void orderCompleteAcknowledgement(int orderId) {
+		NewOrderSingle o = OUT_QUEUE.get(orderId);
+		System.out.println("Order " + o.toString() + "is complete. Removing from queue.");
+		OUT_QUEUE.remove(orderId);
 	}
 
 	private void newOrderSingleAcknowledgement(int OrderId){

@@ -11,12 +11,12 @@ class MockClient extends Thread{
 			SampleClient client=new SampleClient(port);
 			if(port==2000){
 				//TODO why does this take an arg?
-				client.sendOrder(null);
-				int id=client.sendOrder(null);
+				client.sendOrder("buy");
+				int id=client.sendOrder("buy");
 				//TODO client.sendCancel(id);
 				client.messageHandler();
 			}else{
-				client.sendOrder(null);
+				client.sendOrder("buy");
 				client.messageHandler();
 			}
 		} catch (IOException e) {

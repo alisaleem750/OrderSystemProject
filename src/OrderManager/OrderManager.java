@@ -49,7 +49,6 @@ public class OrderManager {
         //main loop, wait for a message, then process it
         while (true) {
             //TODO this is pretty cpu intensive, use a more modern polling/interrupt/select approach
-            /** Ali - Do it with multithreading? Can call wait() method to wait until a notify message has been received and progress can be resumed*/
             //we want to use the arrayindex as the clientId, so use traditional for loop instead of foreach
             for (clientId = 0; clientId < this.clients.length; clientId++) { //check if we have data on any of the sockets
                 client = this.clients[clientId];
@@ -145,7 +144,7 @@ public class OrderManager {
         ObjectOutputStream os = new ObjectOutputStream(clients[clientId].getOutputStream());
         //newOrderSingle acknowledgement
         //ClOrdId is 11=
-        os.writeObject("11=" + clientOrderId + ";35=A;39=A;");
+        os.writeObject("11=" + clientOrderId + ";35=A;54=1;39=A;");
         os.flush();
         sendOrderToTrader(id, orders.get(id), TradeScreen.api.newOrder);
         //send the new order to the trading screen
@@ -171,7 +170,7 @@ public class OrderManager {
         ObjectOutputStream os = new ObjectOutputStream(clients[o.clientId].getOutputStream());
         //newOrderSingle acknowledgement
         //ClOrdId is 11=
-        os.writeObject("11=" + o.clientOrderID + ";35=A;39=0");
+        os.writeObject("11=" + o.clientOrderID + ";35=A;54=1;39=0");
         os.flush();
         price(id, o);
     }
@@ -221,6 +220,7 @@ public class OrderManager {
             o.setOrdStatus('2');
             updateOrder(id);
         } else {
+            System.out.println("order "+o.id+" original size: "+o.size+ " size remaining: "+o.sizeRemaining());
             o.setOrdStatus('1');
             updateOrder(id);
         }
@@ -230,7 +230,7 @@ public class OrderManager {
     private void updateOrder(int id) throws IOException {
         Order o = orders.get(id);
         ObjectOutputStream os = new ObjectOutputStream(clients[o.clientId].getOutputStream());
-        os.writeObject("11=" + o.clientOrderID + ";35=A;39="+o.getOrdStatus());
+        os.writeObject("11=" + o.clientOrderID + ";35=A;54=1;39="+o.getOrdStatus());
         os.flush();
     }
 
