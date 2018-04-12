@@ -134,5 +134,9 @@ public class Order implements Serializable{
 	public char getOrdStatus(){
 		return OrdStatus;
 	}
+
+	public void setOrdStatus(char OrdStatus){
+		OrdStatus = OrdStatus;
+	}
 }
 

@@ -218,9 +218,20 @@ public class OrderManager {
         Order o = orders.get(id);
         o.slices.get(sliceId).createFill(size, price);
         if (o.sizeRemaining() == 0) {
-            Database.write(o);
+            o.setOrdStatus('2');
+            updateOrder(id);
+        } else {
+            o.setOrdStatus('1');
+            updateOrder(id);
         }
         sendOrderToTrader(id, o, TradeScreen.api.fill);
+    }
+
+    private void updateOrder(int id) throws IOException {
+        Order o = orders.get(id);
+        ObjectOutputStream os = new ObjectOutputStream(clients[o.clientId].getOutputStream());
+        os.writeObject("11=" + o.clientOrderID + ";35=A;39="+o.getOrdStatus());
+        os.flush();
     }
 
     private void routeOrder(int id, int sliceId, int size, Order order) throws IOException {
