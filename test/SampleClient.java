@@ -31,6 +31,8 @@ public class SampleClient extends Mock implements Client{
 		/** Ali - below should be price, not instId */
 		int instid=RANDOM_NUM_GENERATOR.nextInt(3);
 		Instrument instrument=INSTRUMENTS[RANDOM_NUM_GENERATOR.nextInt(INSTRUMENTS.length)];
+//		int price = instrument.
+//		NewOrderSingle nos=new NewOrderSingle(size,price,instrument);
 		NewOrderSingle nos=new NewOrderSingle(size,instid,instrument);
 		//show("sendOrder: id="+id+" size="+size+" instrument="+INSTRUMENTS[instid].toString());
 		show("sendOrder: id="+id+" size="+size+" instrument="+nos.instrument.toString());
@@ -38,7 +40,7 @@ public class SampleClient extends Mock implements Client{
 		if(omConn.isConnected()){
 			ObjectOutputStream os=new ObjectOutputStream(omConn.getOutputStream());
 			os.writeObject("newOrderSingle");
-			//os.writeObject("35=D;");
+//			os.writeObject("35=D;");
 			os.writeInt(id);
 			os.writeObject(nos);
 			os.flush();
@@ -68,9 +70,9 @@ public class SampleClient extends Mock implements Client{
 		OUT_QUEUE.remove(order.clientOrderID);
 	}
 
-	enum methods{newOrderSingleAcknowledgement, orderCompleteAcknowledgement,dontKnow};
+	enum methods{newOrderSingleAcknowledgement, orderCompleteAcknowledgement, orderPartialFillAcknowledgement, dontKnow};
 	@Override
-	public void messageHandler(){
+	public void messageHandler() throws InterruptedException {
 		
 		ObjectInputStream is;
 		try {
@@ -99,13 +101,16 @@ public class SampleClient extends Mock implements Client{
 								break;
 							case"54"://doSomethingWithOrderBuyOrSell?
 							case"39":OrdStatus=tag_value[1].charAt(0);
-								if(OrdStatus=='2')whatToDo=methods.orderCompleteAcknowledgement;
+								if(OrdStatus=='A')whatToDo=methods.newOrderSingleAcknowledgement;
+								else if(OrdStatus=='1')whatToDo=methods.orderPartialFillAcknowledgement;
+								else if(OrdStatus=='2')whatToDo=methods.orderCompleteAcknowledgement;
 								break;
 						}
 					}
 					switch(whatToDo){
 						case newOrderSingleAcknowledgement:newOrderSingleAcknowledgement(OrderId); break;
-						case orderCompleteAcknowledgement:orderCompleteAcknowledgement(OrderId);
+						case orderCompleteAcknowledgement:orderCompleteAcknowledgement(OrderId); break;
+						case orderPartialFillAcknowledgement:partialFill(OrderId);
 					}
 					
 					/*message=connection.getMessage();
@@ -124,15 +129,24 @@ public class SampleClient extends Mock implements Client{
 		}
 	}
 
-	private void orderCompleteAcknowledgement(int orderId) {
+	private void partialFill(int orderId) {
+		OUT_QUEUE.get(orderId).OrdStatus='1';
+	}
+
+	private void orderCompleteAcknowledgement(int orderId) throws InterruptedException {
 		NewOrderSingle o = OUT_QUEUE.get(orderId);
 		System.out.println("Order " + o.toString() + "is complete. Removing from queue.");
 		OUT_QUEUE.remove(orderId);
+		if(OUT_QUEUE.isEmpty()){
+			Thread.currentThread().interrupt();
+		}
 	}
 
 	private void newOrderSingleAcknowledgement(int OrderId){
 		System.out.println(Thread.currentThread().getName()+" called newOrderSingleAcknowledgement");
-		//do nothing, as not recording so much state in the NOS class at present
+		// Update the order status to new.
+		NewOrderSingle nos = OUT_QUEUE.get(OrderId);
+		nos.OrdStatus='0';
 	}
 /*listen for connections
 once order manager has connected, then send and cancel orders randomly

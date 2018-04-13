@@ -90,14 +90,24 @@ public class OrderManager {
 				switch(method){
 					case "acceptOrder":acceptOrder(is.readInt());break;
 					case "sliceOrder":sliceOrder(is.readInt(), is.readInt());break;
-					case "deleteOrder":deleteOrder(is.readInt(), (Order) is.readObject());break;
+					case "updateOrder":updateOrder(is.readInt(), (Order) is.readObject());break;
 
 				}
 			}
 		}
 	}
-      
-	private Socket connect(InetSocketAddress location) throws InterruptedException{
+
+    private void updateOrder(int id, Order order) throws IOException {
+        ObjectOutputStream os = new ObjectOutputStream(clients[order.getClientId()].getOutputStream());
+        os.writeInt(order.getOrderStatus());
+        os.writeObject(order);
+        os.flush();
+        if(order.getOrdStatus() == 2){
+            deleteOrder(id);
+        }
+    }
+
+    private Socket connect(InetSocketAddress location) throws InterruptedException{
 		boolean connected=false;
 		int tryCounter=0;
 		while(!connected&&tryCounter<600){
@@ -120,7 +130,7 @@ public class OrderManager {
 		ObjectOutputStream os=new ObjectOutputStream(clients[clientId].getOutputStream());
 		//newOrderSingle acknowledgement
 		//ClOrdId is 11=
-		os.writeObject("11="+clientOrderId+";35=A;54=1;39=A");
+		os.writeObject("11="+clientOrderId+";35=D;54=1;39=A");
 		os.flush();
 		sendOrderToTrader(id,orders.get(id),TradeScreen.api.newOrder);
 		//send the new order to the trading screen
@@ -144,7 +154,7 @@ public class OrderManager {
 		ObjectOutputStream os=new ObjectOutputStream(clients[o.clientId].getOutputStream());
 		//newOrderSingle acknowledgement
 		//ClOrdId is 11=
-		os.writeObject("11="+o.clientOrderID +";35=A;54=1;39=0");
+		os.writeObject("11="+o.clientOrderID +";35=D;54=1;39=0");
 		os.flush();
 
 		price(id,o);
@@ -194,16 +204,8 @@ public class OrderManager {
 		/** implement in SampleClient */
 	}
 
-	private void deleteOrder(int id, Order order) throws IOException {
+	private void deleteOrder(int id) {
 		orders.remove(id);
-		deleteClientOrder(id, order);
-	}
-
-	private void deleteClientOrder(int id, Order order) throws IOException {
-		ObjectOutputStream os = new ObjectOutputStream(clients[order.getClientId()].getOutputStream());
-		os.writeInt(2);
-		os.writeObject(order);
-		os.flush();
 	}
 
 	private void newFill(int id,int sliceId,int size,double price) throws IOException{
