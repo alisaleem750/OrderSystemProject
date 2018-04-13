@@ -92,22 +92,22 @@ public class Order implements Serializable{
 			//TODO could optimise this to not start at the beginning every time
 			for(Order matchingSlice:matchingOrder.slices){
 				int matchingSliceSize=matchingSlice.sizeRemaining();
--				if(matchingSliceSize==0)continue;
--				int sliceSize=slice.sizeRemaining();
--				if(sliceSize<=matchingSliceSize){
--					 slice.createFill(sliceSize,initialMarketPrice);
--					 matchingSlice.createFill(sliceSize, initialMarketPrice);
+				if(matchingSliceSize==0)continue;
+				int sliceSize=slice.sizeRemaining();
+				if(sliceSize<=matchingSliceSize){
+					 slice.createFill(sliceSize,initialMarketPrice);
+					 matchingSlice.createFill(sliceSize, initialMarketPrice);
 				} else {
 					slice.createFill(msze, initialMarketPrice);
 					matchingSlice.createFill(msze, initialMarketPrice);
 				}
 			}
-			int sze=slice.sizeRemaining();
+			int sliceSize=slice.sizeRemaining();
 			int mParent=matchingOrder.sizeRemaining()-matchingOrder.sliceSizes();
-			if(sze>0 && mParent>0){
-				if(sze>=mParent){
-					slice.createFill(sze,initialMarketPrice);
-					matchingOrder.createFill(sze, initialMarketPrice);
+			if(sliceSize>0 && mParent>0){
+				if(sliceSize>=mParent){
+					slice.createFill(sliceSize,initialMarketPrice);
+					matchingOrder.createFill(sliceSize, initialMarketPrice);
 				}else{
 					slice.createFill(mParent,initialMarketPrice);
 					matchingOrder.createFill(mParent, initialMarketPrice);					
