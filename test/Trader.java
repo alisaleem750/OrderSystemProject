@@ -27,8 +27,8 @@ public class Trader extends Thread implements TradeScreen{
 			
 			//is=new ObjectInputStream( omConn.getInputStream());
 			InputStream s=omConn.getInputStream(); //if i try to create an objectinputstream before we have data it will block
-			boolean done = false;
-			while(!done){
+			boolean check=true;
+			while(check){
 				if(0<s.available()){
 					is=new ObjectInputStream(s);  //TODO check if we need to create each time. this will block if no data, but maybe we can still try to create it once instead of repeatedly
 					api method=(api)is.readObject();
@@ -37,11 +37,11 @@ public class Trader extends Thread implements TradeScreen{
 						case newOrder:newOrder(is.readInt(),(Order)is.readObject());break;
 						case price:price(is.readInt(),(Order)is.readObject());break;
 						case cross:is.readInt();is.readObject();break; //TODO
-						case fill: fill(is.readInt(),(Order)is.readObject());break; //TODO
+						case fill:fill(is.readInt(),(Order)is.readObject());break; //TODO
 					}
-				}else{
-					System.out.println("Trader Waiting for data to be available - sleep 1s");
-					System.out.println(orders.size());
+				}
+				else{
+					//System.out.println("Trader Waiting for data to be available - sleep 1s");
 					Thread.sleep(1000);
 				}
 			}
@@ -50,7 +50,6 @@ public class Trader extends Thread implements TradeScreen{
 			e.printStackTrace();
 		}
 	}
-
 	@Override
 	public void newOrder(int id,Order order) throws IOException, InterruptedException {
 		//TODO the order should go in a visual grid, but not needed for test purposes
@@ -67,21 +66,6 @@ public class Trader extends Thread implements TradeScreen{
 		os.flush();
 	}
 
-	public void fill(int id, Order order) throws IOException, InterruptedException {
-		orders.remove(id);
-		orders.put(id, order);
-		price(id, order);
-	}
-
-	public void deleteOrder(int id, Order order) throws IOException {
-		os = new ObjectOutputStream(omConn.getOutputStream());
-		os.writeObject("deleteOrder");
-		os.writeInt(id);
-		os.writeObject(order);
-		os.flush();
-	}
-
-
 	@Override
 	public void sliceOrder(int id, int sliceSize) throws IOException {
 		os=new ObjectOutputStream(omConn.getOutputStream());
@@ -95,5 +79,9 @@ public class Trader extends Thread implements TradeScreen{
 		//TODO should update the trade screen
 		Thread.sleep(2134);
 		sliceOrder(id,orders.get(id).sizeRemaining()/2);
+	}
+
+	public void fill(int id, Order o){
+
 	}
 }
