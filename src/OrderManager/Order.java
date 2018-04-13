@@ -91,12 +91,12 @@ public class Order implements Serializable{
 			if(slice.sizeRemaining()==0)continue;
 			//TODO could optimise this to not start at the beginning every time
 			for(Order matchingSlice:matchingOrder.slices){
-				int msze=matchingSlice.sizeRemaining();
-				if(msze==0)continue;
-				int sze=slice.sizeRemaining();
-				if(sze<=msze){
-					 slice.createFill(sze,initialMarketPrice);
-					 matchingSlice.createFill(sze, initialMarketPrice);
+				int matchingSliceSize=matchingSlice.sizeRemaining();
+-				if(matchingSliceSize==0)continue;
+-				int sliceSize=slice.sizeRemaining();
+-				if(sliceSize<=matchingSliceSize){
+-					 slice.createFill(sliceSize,initialMarketPrice);
+-					 matchingSlice.createFill(sliceSize, initialMarketPrice);
 				} else {
 					slice.createFill(msze, initialMarketPrice);
 					matchingSlice.createFill(msze, initialMarketPrice);
