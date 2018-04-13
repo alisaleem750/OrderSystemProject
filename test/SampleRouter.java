@@ -42,12 +42,12 @@ public class SampleRouter extends Thread implements Router{
 		} catch (IOException | ClassNotFoundException | InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+
 		}
 	}
 	@Override
 	public void routeOrder(int id,int sliceId,int size,Instrument i) throws IOException, InterruptedException{ //MockI.show(""+order);
 		int fillSize=RANDOM_NUM_GENERATOR.nextInt(size);
-		//int fillSize = size;
 		//TODO have this similar to the market price of the instrument
 		double fillPrice=199*RANDOM_NUM_GENERATOR.nextDouble();
 		Thread.sleep(42);

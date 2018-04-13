@@ -23,21 +23,35 @@ public class Order implements Serializable{
 	public Order(int clientId, int ClientOrderID, Instrument instrument, int size){
 		this.clientOrderID =ClientOrderID;
 		this.size=size;
-		this.clientId =clientId;
+		this.clientId=clientId;
 		this.instrument=instrument;
 		fills=new ArrayList<Fill>();
 		slices=new ArrayList<Order>();
 	}
 
+	public char getOrderStatus() {
+		return OrdStatus;
+	}
+	float price(){
+		//TODO this is buggy as it doesn't take account of slices. Let them fix it
+		float sum=0;
+		for(Fill fill:fills){
+			sum+=fill.price;
+		}
+		return sum/fills.size();
+	}
 	public int sliceSizes(){
 		int totalSizeOfSlices=0;
-		for(Order c:slices)totalSizeOfSlices+=c.size;
+		for(Order c:slices) {
+			totalSizeOfSlices+=c.size;
+		}
 		return totalSizeOfSlices;
 	}
 	public int newSlice(int sliceSize){
 		slices.add(new Order(id, clientOrderID,instrument,sliceSize));
 		return slices.size()-1;
 	}
+
 	public int sizeFilled(){
 		int filledSoFar=0;
 		for(Fill f:fills){
@@ -52,22 +66,24 @@ public class Order implements Serializable{
 		return size-sizeFilled();
 	}
 
-	float price(){
-		//TODO this is buggy as it doesn't take account of slices. Let them fix it
-		float sum=0;
-		for(Fill fill:fills){
-			sum+=fill.price;
-		}
-		return sum/fills.size();
-	}
-	void createFill(int size,double price){
+	void
+	createFill(int size,double price){
 		fills.add(new Fill(size,price));
-		if(sizeRemaining()==0){
+		if(this.sizeRemaining()==0){
 			OrdStatus='2';
 		}else{
 			OrdStatus='1';
 		}
 	}
+
+	public int getClientId() {
+		return this.clientId;
+	}
+
+	public void setInitialPrice(double price) {
+		this.initialMarketPrice = price;
+	}
+
 	void cross(Order matchingOrder){
 		//pair slices first and then parent
 		for(Order slice:slices){
@@ -80,11 +96,10 @@ public class Order implements Serializable{
 				if(sliceSize<=matchingSliceSize){
 					 slice.createFill(sliceSize,initialMarketPrice);
 					 matchingSlice.createFill(sliceSize, initialMarketPrice);
-					 break;
+				} else {
+					slice.createFill(matchingSliceSize, initialMarketPrice);
+					matchingSlice.createFill(matchingSliceSize, initialMarketPrice);
 				}
-				//sliceSize>matchingSliceSize
-				slice.createFill(matchingSliceSize,initialMarketPrice);
-				matchingSlice.createFill(matchingSliceSize, initialMarketPrice);
 			}
 			int sliceSize=slice.sizeRemaining();
 			int mParent=matchingOrder.sizeRemaining()-matchingOrder.sliceSizes();
@@ -110,7 +125,7 @@ public class Order implements Serializable{
 					 matchingSlice.createFill(sliceSize, initialMarketPrice);
 					 break;
 				}
-				//sliceSize>matchingSliceSize
+				//sze>msze
 				createFill(matchingSliceSize,initialMarketPrice);
 				matchingSlice.createFill(matchingSliceSize, initialMarketPrice);
 			}
@@ -122,7 +137,7 @@ public class Order implements Serializable{
 					matchingOrder.createFill(sliceSize, initialMarketPrice);
 				}else{
 					createFill(mParent,initialMarketPrice);
-					matchingOrder.createFill(mParent, initialMarketPrice);					
+					matchingOrder.createFill(mParent, initialMarketPrice);
 				}
 			}
 		}
@@ -130,13 +145,12 @@ public class Order implements Serializable{
 	void cancel(){
 		//state=cancelled
 	}
-
-	public char getOrdStatus(){
-		return OrdStatus;
-	}
-
-	public void setOrdStatus(char OrdStatus){
-		this.OrdStatus = OrdStatus;
+	
+	public char getOrdStatus(){	
+		return OrdStatus;	
+	}	
+	
+	public void setOrdStatus(char OrdStatus){	
+		this.OrdStatus = OrdStatus;	
 	}
 }
-

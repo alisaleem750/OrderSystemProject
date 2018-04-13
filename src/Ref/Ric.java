@@ -8,10 +8,9 @@ public class Ric implements Serializable{
 		this.ric=ric;
 	}
 	public String getEx(){
-		return ric.split("")[1];
+		return ric.split(".")[1];
 	}
 	public String getCompany(){
-		return ric.split("")[0];
+		return ric.split(".")[0];
 	}
-	/**Ali - RIC = Reuters instrument code. Ex = Which stock exchange it is on. Company = company concerned */
 }

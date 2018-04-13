@@ -14,5 +14,5 @@ public interface Client{
 	void fullyFilled(Order order);
 	void cancelled(Order order);
 	
-	void messageHandler();
+	void messageHandler() throws InterruptedException;
 }
