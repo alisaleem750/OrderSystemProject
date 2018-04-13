@@ -12,7 +12,7 @@ public class Order implements Serializable{
 	int size;
 	double[]bestPrices;
 	int bestPriceCount;
-	int clientid;
+	int clientId;
 	public Instrument instrument;
 	public double initialMarketPrice;
 	ArrayList<Order>slices;
@@ -23,7 +23,7 @@ public class Order implements Serializable{
 	public Order(int clientId, int ClientOrderID, Instrument instrument, int size){
 		this.clientOrderID =ClientOrderID;
 		this.size=size;
-		this.clientid=clientId;
+		this.clientId=clientId;
 		this.instrument=instrument;
 		fills=new ArrayList<Fill>();
 		slices=new ArrayList<Order>();
@@ -78,7 +78,7 @@ public class Order implements Serializable{
 	}
 
 	public int getClientId() {
-		return this.clientid;
+		return this.clientId;
 	}
 
 	public void setInitialPrice(double price) {
