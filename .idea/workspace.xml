@@ -2,19 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="253fd422-f9e8-4387-b3f9-ce9f2350621a" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/vcs.xml" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/OrderClient/Client.java" afterPath="$PROJECT_DIR$/src/OrderClient/Client.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/OrderManager/Order.java" afterPath="$PROJECT_DIR$/src/OrderManager/Order.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/OrderManager/OrderManager.java" afterPath="$PROJECT_DIR$/src/OrderManager/OrderManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/TradeScreen/TradeScreen.java" afterPath="$PROJECT_DIR$/src/TradeScreen/TradeScreen.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/MockClient.java" afterPath="$PROJECT_DIR$/test/MockClient.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/SampleClient.java" afterPath="$PROJECT_DIR$/test/SampleClient.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/SampleLiveMarketData.java" afterPath="$PROJECT_DIR$/test/SampleLiveMarketData.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/SampleRouter.java" afterPath="$PROJECT_DIR$/test/SampleRouter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/Trader.java" afterPath="$PROJECT_DIR$/test/Trader.java" />
     </list>
     <ignored path="$PROJECT_DIR$/bin/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -51,17 +39,17 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SampleClient.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="SampleClient.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/test/SampleClient.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="298">
-              <caret line="30" column="36" lean-forward="true" selection-start-line="30" selection-start-column="36" selection-end-line="30" selection-end-column="36" />
+            <state relative-caret-position="498">
+              <caret line="32" column="78" lean-forward="false" selection-start-line="32" selection-start-column="78" selection-end-line="32" selection-end-column="78" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Trader.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Trader.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test/Trader.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="720">
@@ -196,11 +184,11 @@
         <option value="$PROJECT_DIR$/src/OrderManager/Order.java" />
         <option value="$PROJECT_DIR$/src/OrderManager/OrderManager.java" />
         <option value="$PROJECT_DIR$/src/OrderClient/Client.java" />
-        <option value="$PROJECT_DIR$/test/SampleClient.java" />
         <option value="$PROJECT_DIR$/test/Trader.java" />
         <option value="$PROJECT_DIR$/test/MockClient.java" />
         <option value="$PROJECT_DIR$/test/SampleRouter.java" />
         <option value="$PROJECT_DIR$/test/SampleLiveMarketData.java" />
+        <option value="$PROJECT_DIR$/test/SampleClient.java" />
       </list>
     </option>
   </component>
@@ -733,6 +721,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="275">
           <caret line="13" column="35" lean-forward="true" selection-start-line="13" selection-start-column="35" selection-end-line="13" selection-end-column="35" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -898,14 +887,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/SampleClient.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="298">
-          <caret line="30" column="36" lean-forward="true" selection-start-line="30" selection-start-column="36" selection-end-line="30" selection-end-column="36" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/test/MockClient.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="568">
@@ -932,6 +913,14 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/test/Trader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="720">
+          <caret line="93" column="1" lean-forward="true" selection-start-line="93" selection-start-column="1" selection-end-line="93" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/test/SampleLiveMarketData.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="175">
@@ -944,10 +933,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/Trader.java">
+    <entry file="file://$PROJECT_DIR$/test/SampleClient.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="720">
-          <caret line="93" column="1" lean-forward="true" selection-start-line="93" selection-start-column="1" selection-end-line="93" selection-end-column="1" />
+        <state relative-caret-position="498">
+          <caret line="32" column="78" lean-forward="false" selection-start-line="32" selection-start-column="78" selection-end-line="32" selection-end-column="78" />
           <folding />
         </state>
       </provider>
