@@ -146,4 +146,12 @@ public class Order implements Serializable{
 	void cancel(){
 		//state=cancelled
 	}
+	
+	public char getOrdStatus(){	
+		return OrdStatus;	
+	}	
+	
+	public void setOrdStatus(char OrdStatus){	
+		this.OrdStatus = OrdStatus;	
+	}
 }
