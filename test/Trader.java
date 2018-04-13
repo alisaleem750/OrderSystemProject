@@ -37,9 +37,10 @@ public class Trader extends Thread implements TradeScreen{
 						case newOrder:newOrder(is.readInt(),(Order)is.readObject());break;
 						case price:price(is.readInt(),(Order)is.readObject());break;
 						case cross:is.readInt();is.readObject();break; //TODO
-						case fill:fill(is.readInt(), (Order) is.readObject());break; //TODO
+						case fill:fill(is.readInt(),(Order)is.readObject());break; //TODO
 					}
-				}else{
+				}
+				else{
 					//System.out.println("Trader Waiting for data to be available - sleep 1s");
 					Thread.sleep(1000);
 				}

@@ -8,7 +8,7 @@ import Ref.Instrument;
 public class Order implements Serializable{
 	public int id; //TODO these should all be longs
 	short orderRouter;
-	public int clientOrderID; //TODO refactor to lowercase C
+	public int ClientOrderID; //TODO refactor to lowercase C
 	int size;
 	double[]bestPrices;
 	int bestPriceCount;
@@ -48,7 +48,7 @@ public class Order implements Serializable{
 		return totalSizeOfSlices;
 	}
 	public int newSlice(int sliceSize){
-		slices.add(new Order(id, clientOrderID,instrument,sliceSize));
+		slices.add(new Order(id,ClientOrderID,instrument,sliceSize));
 		return slices.size()-1;
 	}
 
@@ -74,6 +74,7 @@ public class Order implements Serializable{
 		}else{
 			OrdStatus='1';
 		}
+
 	}
 
 	public int getClientId() {
@@ -103,10 +104,10 @@ public class Order implements Serializable{
 			}
 			int sliceSize=slice.sizeRemaining();
 			int mParent=matchingOrder.sizeRemaining()-matchingOrder.sliceSizes();
-			if(sliceSize>0 && mParent>0){
-				if(sliceSize>=mParent){
-					slice.createFill(sliceSize,initialMarketPrice);
-					matchingOrder.createFill(sliceSize, initialMarketPrice);
+			if(sze>0 && mParent>0){
+				if(sze>=mParent){
+					slice.createFill(sze,initialMarketPrice);
+					matchingOrder.createFill(sze, initialMarketPrice);
 				}else{
 					slice.createFill(mParent,initialMarketPrice);
 					matchingOrder.createFill(mParent, initialMarketPrice);					
@@ -117,24 +118,24 @@ public class Order implements Serializable{
 		}
 		if(sizeRemaining()>0){
 			for(Order matchingSlice:matchingOrder.slices){
-				int matchingSliceSize=matchingSlice.sizeRemaining();
-				if(matchingSliceSize==0)continue;
-				int sliceSize=sizeRemaining();
-				if(sliceSize<=matchingSliceSize){
-					 createFill(sliceSize,initialMarketPrice);
-					 matchingSlice.createFill(sliceSize, initialMarketPrice);
+				int msze=matchingSlice.sizeRemaining();
+				if(msze==0)continue;
+				int sze=sizeRemaining();
+				if(sze<=msze){
+					 createFill(sze,initialMarketPrice);
+					 matchingSlice.createFill(sze, initialMarketPrice);
 					 break;
 				}
 				//sze>msze
 				createFill(matchingSliceSize,initialMarketPrice);
 				matchingSlice.createFill(matchingSliceSize, initialMarketPrice);
 			}
-			int sliceSize=sizeRemaining();
+			int sze=sizeRemaining();
 			int mParent=matchingOrder.sizeRemaining()-matchingOrder.sliceSizes();
-			if(sliceSize>0 && mParent>0){
-				if(sliceSize>=mParent){
-					createFill(sliceSize,initialMarketPrice);
-					matchingOrder.createFill(sliceSize, initialMarketPrice);
+			if(sze>0 && mParent>0){
+				if(sze>=mParent){
+					createFill(sze,initialMarketPrice);
+					matchingOrder.createFill(sze, initialMarketPrice);
 				}else{
 					createFill(mParent,initialMarketPrice);
 					matchingOrder.createFill(mParent, initialMarketPrice);
