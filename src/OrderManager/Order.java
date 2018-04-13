@@ -11,6 +11,7 @@ public class Order implements Serializable{
 	public int clientOrderID; //TODO refactor to lowercase C
 	int size;
 	double[]bestPrices;
+	int bestPriceCount;
 	int clientid;
 	public Instrument instrument;
 	public double initialMarketPrice;
