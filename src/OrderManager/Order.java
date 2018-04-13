@@ -8,7 +8,7 @@ import Ref.Instrument;
 public class Order implements Serializable{
 	public int id; //TODO these should all be longs
 	short orderRouter;
-	public int ClientOrderID; //TODO refactor to lowercase C
+	public int clientOrderID; //TODO refactor to lowercase C
 	int size;
 	double[]bestPrices;
 	int bestPriceCount;
@@ -48,7 +48,7 @@ public class Order implements Serializable{
 		return totalSizeOfSlices;
 	}
 	public int newSlice(int sliceSize){
-		slices.add(new Order(id,ClientOrderID,instrument,sliceSize));
+		slices.add(new Order(id, clientOrderID,instrument,sliceSize));
 		return slices.size()-1;
 	}
 
@@ -104,10 +104,10 @@ public class Order implements Serializable{
 			}
 			int sliceSize=slice.sizeRemaining();
 			int mParent=matchingOrder.sizeRemaining()-matchingOrder.sliceSizes();
-			if(sze>0 && mParent>0){
-				if(sze>=mParent){
-					slice.createFill(sze,initialMarketPrice);
-					matchingOrder.createFill(sze, initialMarketPrice);
+			if(sliceSize>0 && mParent>0){
+				if(sliceSize>=mParent){
+					slice.createFill(sliceSize,initialMarketPrice);
+					matchingOrder.createFill(sliceSize, initialMarketPrice);
 				}else{
 					slice.createFill(mParent,initialMarketPrice);
 					matchingOrder.createFill(mParent, initialMarketPrice);					
@@ -118,15 +118,15 @@ public class Order implements Serializable{
 		}
 		if(sizeRemaining()>0){
 			for(Order matchingSlice:matchingOrder.slices){
-				int msze=matchingSlice.sizeRemaining();
-				if(msze==0)continue;
+				int matchingSliceSize=matchingSlice.sizeRemaining();
+				if(matchingSliceSize==0)continue;
 				int sze=sizeRemaining();
-				if(sze<=msze){
+				if(sze<=matchingSliceSize){
 					 createFill(sze,initialMarketPrice);
 					 matchingSlice.createFill(sze, initialMarketPrice);
 					 break;
 				}
-				//sze>msze
+				//sze>matchingSliceSize
 				createFill(matchingSliceSize,initialMarketPrice);
 				matchingSlice.createFill(matchingSliceSize, initialMarketPrice);
 			}

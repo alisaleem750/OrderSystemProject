@@ -5,16 +5,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketException;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.IntSummaryStatistics;
 import java.util.Map;
 import Database.Database;
 import LiveMarketData.LiveMarketData;
 import OrderClient.NewOrderSingle;
 import OrderRouter.Router;
-import OrderRouter.Router.api;
 import TradeScreen.TradeScreen;
 
 public class OrderManager {
@@ -145,10 +141,10 @@ public class OrderManager {
 			return;
 		}
 		o.OrdStatus='0'; //New
-		ObjectOutputStream os=new ObjectOutputStream(clients[o.clientid].getOutputStream());
+		ObjectOutputStream os=new ObjectOutputStream(clients[o.clientId].getOutputStream());
 		//newOrderSingle acknowledgement
 		//ClOrdId is 11=
-		os.writeObject("11="+o.ClientOrderID+";35=A;54=1;39=0");
+		os.writeObject("11="+o.clientOrderID +";35=A;54=1;39=0");
 		os.flush();
 
 		price(id,o);
