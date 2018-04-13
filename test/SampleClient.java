@@ -15,28 +15,30 @@ import Ref.Ric;
 public class SampleClient extends Mock implements Client{
 	private static final Random RANDOM_NUM_GENERATOR=new Random();
 	private static final Instrument[] INSTRUMENTS={new Instrument(new Ric("VOD.L")), new Instrument(new Ric("BP.L")), new Instrument(new Ric("BT.L"))};
-	private static final HashMap<Integer, NewOrderSingle> OUT_QUEUE=new HashMap(); //queue for outgoing orders
+	private static final HashMap OUT_QUEUE=new HashMap(); //queue for outgoing orders
 	private int id=0; //message id number
 	private Socket omConn; //connection to order manager
+//	private ObjectOutputStream os;
 			
 	public SampleClient(int port) throws IOException{
 		//OM will connect to us
 		omConn=new ServerSocket(port).accept();
+//		os = new ObjectOutputStream(omConn.getOutputStream());
 		System.out.println("OM connected to client port "+port);
 	}
 	
 	@Override
-	public int sendOrder(Object orderType)throws IOException{
+	public int sendOrder()throws IOException{
 		int size=RANDOM_NUM_GENERATOR.nextInt(5000);
-		/** Ali - below should be price, not instId */
 		int instid=RANDOM_NUM_GENERATOR.nextInt(3);
 		Instrument instrument=INSTRUMENTS[RANDOM_NUM_GENERATOR.nextInt(INSTRUMENTS.length)];
+		/** NewOrderSingle should be instantiated with price, not instid */
 		NewOrderSingle nos=new NewOrderSingle(size,instid,instrument);
-		//show("sendOrder: id="+id+" size="+size+" instrument="+INSTRUMENTS[instid].toString());
-		show("sendOrder: id="+id+" size="+size+" instrument="+nos.instrument.toString());
+		
+		show("sendOrder: id="+id+" size="+size+" instrument="+INSTRUMENTS[instid].toString());
 		OUT_QUEUE.put(id,nos);
 		if(omConn.isConnected()){
-			ObjectOutputStream os=new ObjectOutputStream(omConn.getOutputStream());
+			ObjectOutputStream os = new ObjectOutputStream(omConn.getOutputStream());
 			os.writeObject("newOrderSingle");
 			//os.writeObject("35=D;");
 			os.writeInt(id);
@@ -47,11 +49,13 @@ public class SampleClient extends Mock implements Client{
 	}
 
 	@Override
-	public void sendCancel(int idToCancel){
+	public void sendCancel(int idToCancel) throws IOException{
 		show("sendCancel: id="+idToCancel);
-		if(omConn.isConnected()){
-			//OMconnection.sendMessage("cancel",idToCancel);
-		}
+//		if(omConn.isConnected()){
+//			os.writeObject("cancel");
+//			os.writeInt(idToCancel);
+//			os.flush();
+//		}
 	}
 
 	@Override
@@ -68,27 +72,29 @@ public class SampleClient extends Mock implements Client{
 		OUT_QUEUE.remove(order.clientOrderID);
 	}
 
-	enum methods{newOrderSingleAcknowledgement, orderCompleteAcknowledgement,dontKnow};
+	enum methods{newOrderSingleAcknowledgement,dontKnow};
 	@Override
-	public void messageHandler(){
+	public void messageHandler() throws InterruptedException {
 		
 		ObjectInputStream is;
 		try {
 			while(true){
 				//is.wait(); //this throws an exception!!
 				while(0<omConn.getInputStream().available()){
+
 					is = new ObjectInputStream(omConn.getInputStream());
 					String fix=(String)is.readObject();
-					//if(fix == "deleteOrder"){
-						//fullyFilled((Order)is.readObject());
-						//break;
-					//}
 					System.out.println(Thread.currentThread().getName()+" received fix message: "+fix);
 					String[] fixTags=fix.split(";");
 					int OrderId=-1;
 					char MsgType;
 					int OrdStatus;
 					methods whatToDo=methods.dontKnow;
+//					OrdStatus = is.readInt();
+//					Order order = (Order) is.readObject();
+//					if (OrdStatus == 2) {
+//						fullyFilled(order);
+//					}
 					//String[][] fixTagsValues=new String[fixTags.length][2];
 					for(int i=0;i<fixTags.length;i++){
 						String[] tag_value=fixTags[i].split("=");
@@ -96,16 +102,13 @@ public class SampleClient extends Mock implements Client{
 							case"11":OrderId=Integer.parseInt(tag_value[1]);break;
 							case"35":MsgType=tag_value[1].charAt(0);
 								if(MsgType=='A')whatToDo=methods.newOrderSingleAcknowledgement;
-								break;
-							case"54"://doSomethingWithOrderBuyOrSell?
+								break; /** add more statements based on the MsgType */
 							case"39":OrdStatus=tag_value[1].charAt(0);
-								if(OrdStatus=='2')whatToDo=methods.orderCompleteAcknowledgement;
-								break;
+								System.out.println("Order status is: " + OrdStatus);break;
 						}
 					}
 					switch(whatToDo){
-						case newOrderSingleAcknowledgement:newOrderSingleAcknowledgement(OrderId); break;
-						case orderCompleteAcknowledgement:orderCompleteAcknowledgement(OrderId);
+						case newOrderSingleAcknowledgement:newOrderSingleAcknowledgement(OrderId);
 					}
 					
 					/*message=connection.getMessage();
@@ -117,6 +120,7 @@ public class SampleClient extends Mock implements Client{
 					}*/
 					show("");
 				}
+				Thread.sleep(1000);
 			}
 		} catch (IOException|ClassNotFoundException e){
 			// TODO Auto-generated catch block
@@ -124,13 +128,7 @@ public class SampleClient extends Mock implements Client{
 		}
 	}
 
-	private void orderCompleteAcknowledgement(int orderId) {
-		NewOrderSingle o = OUT_QUEUE.get(orderId);
-		System.out.println("Order " + o.toString() + "is complete. Removing from queue.");
-		OUT_QUEUE.remove(orderId);
-	}
-
-	private void newOrderSingleAcknowledgement(int OrderId){
+	void newOrderSingleAcknowledgement(int OrderId){
 		System.out.println(Thread.currentThread().getName()+" called newOrderSingleAcknowledgement");
 		//do nothing, as not recording so much state in the NOS class at present
 	}
