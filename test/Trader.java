@@ -68,14 +68,22 @@ public class Trader extends Thread implements TradeScreen{
 	public void fill(int id, Order o) throws IOException, InterruptedException {
 		orders.remove(id);
 		orders.put(id, o);
-		price(id, o);
+		os=new ObjectOutputStream(omConn.getOutputStream());
+		os.writeObject("updateOrder");
+		os.writeInt(id);
+		os.flush();
+		if (o.getOrderStatus() == '2') {
+			orders.remove(id);
+		} else {
+			price(id, o);
+		}
 	}
 
 	@Override
 	public void price(int id,Order o) throws InterruptedException, IOException {
 		//TODO should update the trade screen
-		Thread.sleep(2134);
-		System.out.println("T order: " + id + " client id: " + orders.get(id).clientOrderID + " size: " + orders.get(id).sizeRemaining());
+//		Thread.sleep(234);
+		System.out.println("T order: " + id + " client: " + (orders.get(id).getClientId()+1) + " client order id: " + orders.get(id).clientOrderID + " size: " + orders.get(id).sizeRemaining());
 		/*if (orders.get(id).sizeRemaining() < 20) {
 			System.out.println("order filled");
 			return;

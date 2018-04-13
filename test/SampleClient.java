@@ -98,6 +98,7 @@ public class SampleClient extends Mock implements Client{
 								if(MsgType=='A')whatToDo=methods.newOrderSingleAcknowledgement;
 								break;
 							case"54"://doSomethingWithOrderBuyOrSell?
+								break;
 							case"39":OrdStatus=tag_value[1].charAt(0);
 								if(OrdStatus=='2')whatToDo=methods.orderCompleteAcknowledgement;
 								break;
@@ -126,7 +127,7 @@ public class SampleClient extends Mock implements Client{
 
 	private void orderCompleteAcknowledgement(int orderId) {
 		NewOrderSingle o = OUT_QUEUE.get(orderId);
-		System.out.println("Order " + o.toString() + "is complete. Removing from queue.");
+		System.out.println("Order " + orderId + " for client " +  "is complete. Removing from queue.");
 		OUT_QUEUE.remove(orderId);
 	}
 

@@ -24,8 +24,6 @@ class MockClient extends Thread{
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
 
     }

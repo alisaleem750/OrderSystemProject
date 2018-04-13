@@ -90,11 +90,20 @@ public class OrderManager {
 				switch(method){
 					case "acceptOrder":acceptOrder(is.readInt());break;
 					case "sliceOrder":sliceOrder(is.readInt(), is.readInt());break;
-					case "deleteOrder":deleteOrder(is.readInt(), (Order) is.readObject());break;
+					case "updateOrder":updateOrder(is.readInt());break;
 				}
 			}
 		}
 	}
+
+	private void updateOrder(int id) throws IOException {
+		Order order = orders.get(id);
+		ObjectOutputStream os = new ObjectOutputStream(clients[order.getClientId()].getOutputStream());
+		os.writeObject("11="+order.clientOrderID +";35=A;54=1;39="+order.getOrderStatus());
+		os.flush();
+		if(order.getOrderStatus()==2) deleteOrder(id);
+	}
+
 	private Socket connect(InetSocketAddress location) throws InterruptedException{
 		boolean connected=false;
 		int tryCounter=0;
@@ -118,7 +127,7 @@ public class OrderManager {
 		ObjectOutputStream os=new ObjectOutputStream(clients[clientId].getOutputStream());
 		//newOrderSingle acknowledgement
 		//ClOrdId is 11=
-		os.writeObject("11="+clientOrderId+";35=A;39=A;");
+		os.writeObject("11="+clientOrderId+";35=A;54=1;39=A;");
 		os.flush();
 		sendOrderToTrader(id,orders.get(id),TradeScreen.api.newOrder);
 		//send the new order to the trading screen
@@ -142,7 +151,7 @@ public class OrderManager {
 		ObjectOutputStream os=new ObjectOutputStream(clients[o.clientId].getOutputStream());
 		//newOrderSingle acknowledgement
 		//ClOrdId is 11=
-		os.writeObject("11="+o.clientOrderID +";35=A;39=0");
+		os.writeObject("11="+o.clientOrderID +";35=A;54=1;39=0");
 		os.flush();
 
 		price(id,o);
@@ -152,8 +161,7 @@ public class OrderManager {
 		//slice the order. We have to check this is a valid size.
 		//Order has a list of slices, and a list of fills, each slice is a childorder and each fill is associated with either a child order or the original order
 		if(sliceSize>o.sizeRemaining()){
-			System.out.println("error sliceSize is bigger than remaining size to be filled on the order");
-			return;
+			sliceSize=o.sizeRemaining();
 		}
 		int sliceId=o.newSlice(sliceSize);
 		o.slices.get(sliceId).setInitialPrice(o.initialMarketPrice);
@@ -163,6 +171,7 @@ public class OrderManager {
 		if(sizeRemaining>0){
 			routeOrder(id,sliceId,sizeRemaining,slice);
 		}
+
 	}
 	private void internalCross(int id, Order o) throws IOException{
 		for(Map.Entry<Integer, Order>entry:orders.entrySet()){
@@ -190,29 +199,23 @@ public class OrderManager {
 		/** implement in SampleClient */
 	}
 
-	private void deleteOrder(int id, Order order) throws IOException {
+	private void deleteOrder(int id) throws IOException {
 		orders.remove(id);
-		deleteClientOrder(id, order);
 	}
 
-	private void deleteClientOrder(int id, Order order) throws IOException {
-		ObjectOutputStream os = new ObjectOutputStream(clients[order.getClientId()].getOutputStream());
-		os.writeInt(2);
-		os.writeObject(order);
-		os.flush();
-	}
 
 	private void newFill(int id,int sliceId,int size,double price) throws IOException{
 		Order o=orders.get(id);
 		o.slices.get(sliceId).createFill(size, price);
-		if(o.sizeRemaining()==0){
-
-			Database.write(o);
+		if(o.sizeRemaining()<=0){
+			o.setOrdStatus('2');
+//			Database.write(o);
+			System.out.println("Completed OM order: " + o.id + " client " + o.getClientId() + "client order id: " + o.clientOrderID);
 		}
 		//////////
 		System.out.println("sent 'fill' to trader");
 		//////////
-		System.out.println("OM order: " + o.id + " client id: " + orders.get(id).clientOrderID + " size: " + o.sizeRemaining());
+		System.out.println("OM order: " + o.id + " client " + (orders.get(id).getClientId()+1)+ " client order id: " + (orders.get(id).clientOrderID) + " size: " + o.sizeRemaining());
 		sendOrderToTrader(id, o, TradeScreen.api.fill);
 	}
 	private void routeOrder(int id,int sliceId,int size,Order order) throws IOException{
