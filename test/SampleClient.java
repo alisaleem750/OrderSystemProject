@@ -49,7 +49,7 @@ public class SampleClient extends Mock implements Client{
 	}
 
 	@Override
-	public void sendCancel(int idToCancel) throws IOException{
+	public void sendCancel(int idToCancel){
 		show("sendCancel: id="+idToCancel);
 //		if(omConn.isConnected()){
 //			os.writeObject("cancel");

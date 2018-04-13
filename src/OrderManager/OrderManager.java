@@ -22,22 +22,6 @@ public class OrderManager {
 	private Socket[] orderRouters; //debugger will skip these lines as they dissapear at compile time into 'the object'/stack
 	private Socket[] clients;
 	private Socket trader;
-	private Socket connect(InetSocketAddress location) throws InterruptedException{
-		boolean connected=false;
-		int tryCounter=0;
-		while(!connected&&tryCounter<600){
-			try{
-				Socket s=new Socket(location.getHostName(),location.getPort());
-				s.setKeepAlive(true);
-				return s;
-			}catch (IOException e) {
-				Thread.sleep(1000);
-				tryCounter++;
-			}
-		}
-		System.out.println("Failed to connect to "+location.toString());
-		return null;
-	}
 	//@param args the command line arguments
 	public OrderManager(InetSocketAddress[] orderRouters, InetSocketAddress[] clients,InetSocketAddress trader,LiveMarketData liveMarketData)throws IOException, ClassNotFoundException, InterruptedException{
 		this.liveMarketData=liveMarketData;
@@ -67,7 +51,7 @@ public class OrderManager {
 			for(clientId=0;clientId<this.clients.length;clientId++){ //check if we have data on any of the sockets
 				client=this.clients[clientId];
 				if(0<client.getInputStream().available()){ //if we have part of a message ready to read, assuming this doesn't fragment messages
-					ObjectInputStream is=new ObjectInputStream(client.getInputStream()); //create an object inputstream, this is a pretty stupid way of doing it, why not create it once rather than every time around the loop 
+					ObjectInputStream is=new ObjectInputStream(client.getInputStream()); //create an object inputstream, this is a pretty stupid way of doing it, why not create it once rather than every time around the loop
 					String method=(String)is.readObject();
 					System.out.println(Thread.currentThread().getName()+" calling "+method);
 					switch(method){ //determine the type of message and process it
@@ -98,7 +82,7 @@ public class OrderManager {
 					}
 				}
 			}
-			
+
 			if(0<this.trader.getInputStream().available()){
 				ObjectInputStream is=new ObjectInputStream(this.trader.getInputStream());
 				String method=(String)is.readObject();
@@ -110,6 +94,22 @@ public class OrderManager {
 				}
 			}
 		}
+	}
+	private Socket connect(InetSocketAddress location) throws InterruptedException{
+		boolean connected=false;
+		int tryCounter=0;
+		while(!connected&&tryCounter<600){
+			try{
+				Socket s=new Socket(location.getHostName(),location.getPort());
+				s.setKeepAlive(true);
+				return s;
+			}catch (IOException e) {
+				Thread.sleep(1000);
+				tryCounter++;
+			}
+		}
+		System.out.println("Failed to connect to "+location.toString());
+		return null;
 	}
 
 	private void newOrder(int clientId, int clientOrderId, NewOrderSingle nos) throws IOException{
