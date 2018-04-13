@@ -13,12 +13,12 @@ class MockClient extends Thread{
         try {
             SampleClient client = new SampleClient(port);
             if(port==2000){
-                client.sendOrder();
-                int id=client.sendOrder();
+                client.sendOrder("buy");
+                int id=client.sendOrder("buy");
                 //TODO client.sendCancel(id);
                 client.messageHandler();
             }else{
-                client.sendOrder();
+                client.sendOrder("buy");
                 client.messageHandler();
             }
         } catch (IOException e) {

@@ -91,21 +91,4 @@ public class Trader extends Thread implements TradeScreen{
 		os.writeInt(sliceSize);
 		os.flush();
 	}
-
-	public void check(int id, Order order) throws IOException {
-		char stat = '2';
-		if (order.getOrderStatus() == stat) {
-			orders.remove(id);
-			orderManagerRemove(id, order);
-		}
-	}
-
-	public void orderManagerRemove(int id, Order order) throws IOException {
-		ObjectOutputStream os = new ObjectOutputStream(omConn.getOutputStream());
-		os.writeObject("deleteOrder");
-		os.writeInt(id);
-		os.writeObject(order);
-		os.flush();
-	}
-
 }

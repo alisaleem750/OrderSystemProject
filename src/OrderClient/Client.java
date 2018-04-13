@@ -6,7 +6,7 @@ import OrderManager.Order;
 
 public interface Client{
 	//Outgoing messages
-	int sendOrder()throws IOException;
+	int sendOrder(Object par0)throws IOException;
 	void sendCancel(int id);
 	
 	//Incoming messages

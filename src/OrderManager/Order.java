@@ -11,7 +11,8 @@ public class Order implements Serializable{
 	public int clientOrderID; //TODO refactor to lowercase C
 	int size;
 	double[]bestPrices;
-	int clientid;
+	int bestPriceCount;
+	int clientId;
 	public Instrument instrument;
 	public double initialMarketPrice;
 	ArrayList<Order>slices;
@@ -22,7 +23,7 @@ public class Order implements Serializable{
 	public Order(int clientId, int ClientOrderID, Instrument instrument, int size){
 		this.clientOrderID =ClientOrderID;
 		this.size=size;
-		this.clientid=clientId;
+		this.clientId=clientId;
 		this.instrument=instrument;
 		fills=new ArrayList<Fill>();
 		slices=new ArrayList<Order>();
@@ -39,7 +40,6 @@ public class Order implements Serializable{
 		}
 		return sum/fills.size();
 	}
-	int bestPriceCount;
 	public int sliceSizes(){
 		int totalSizeOfSlices=0;
 		for(Order c:slices) {
@@ -77,7 +77,7 @@ public class Order implements Serializable{
 	}
 
 	public int getClientId() {
-		return this.clientid;
+		return this.clientId;
 	}
 
 	public void setInitialPrice(double price) {
@@ -144,5 +144,13 @@ public class Order implements Serializable{
 	}
 	void cancel(){
 		//state=cancelled
+	}
+	
+	public char getOrdStatus(){	
+		return OrdStatus;	
+	}	
+	
+	public void setOrdStatus(char OrdStatus){	
+		this.OrdStatus = OrdStatus;	
 	}
 }

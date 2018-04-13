@@ -36,7 +36,7 @@ public class SampleRouter extends Thread implements Router{
 						case priceAtSize:priceAtSize(is.readInt(),is.readInt(),(Instrument)is.readObject(),is.readInt());break;
 					}
 				}else{
-					Thread.sleep(1000);
+					Thread.sleep(100);
 				}
 			}
 		} catch (IOException | ClassNotFoundException | InterruptedException e) {
