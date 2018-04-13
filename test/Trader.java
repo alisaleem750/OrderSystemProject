@@ -24,13 +24,13 @@ public class Trader extends Thread implements TradeScreen{
 		//OM will connect to us
 		try {
 			omConn=ServerSocketFactory.getDefault().createServerSocket(port).accept();
-			
-			//is=new ObjectInputStream( omConn.getInputStream());
+
+//			is=new ObjectInputStream( omConn.getInputStream());
 			InputStream s=omConn.getInputStream(); //if i try to create an objectinputstream before we have data it will block
-			boolean check=true;
-			while(check){
+			while(true){ /** fix this */
 				if(0<s.available()){
-					is=new ObjectInputStream(s);  //TODO check if we need to create each time. this will block if no data, but maybe we can still try to create it once instead of repeatedly
+					  //TODO check if we need to create each time. this will block if no data, but maybe we can still try to create it once instead of repeatedly
+					is=new ObjectInputStream(s);
 					api method=(api)is.readObject();
 					System.out.println(Thread.currentThread().getName()+" calling: "+method);
 					switch(method){
@@ -66,6 +66,24 @@ public class Trader extends Thread implements TradeScreen{
 		os.flush();
 	}
 
+	public void fill(int id, Order o) throws IOException, InterruptedException {
+		orders.remove(id);
+		orders.put(id, o);
+		price(id, o);
+	}
+
+	@Override
+	public void price(int id,Order o) throws InterruptedException, IOException {
+		//TODO should update the trade screen
+		Thread.sleep(2134);
+		System.out.println("T order: " + id + " client id: " + orders.get(id).clientOrderID + " size: " + orders.get(id).sizeRemaining());
+		/*if (orders.get(id).sizeRemaining() < 20) {
+			System.out.println("order filled");
+			return;
+		}*/
+		sliceOrder(id,orders.get(id).sizeRemaining()/2);
+	}
+
 	@Override
 	public void sliceOrder(int id, int sliceSize) throws IOException {
 		os=new ObjectOutputStream(omConn.getOutputStream());
@@ -73,15 +91,5 @@ public class Trader extends Thread implements TradeScreen{
 		os.writeInt(id);
 		os.writeInt(sliceSize);
 		os.flush();
-	}
-	@Override
-	public void price(int id,Order o) throws InterruptedException, IOException {
-		//TODO should update the trade screen
-		Thread.sleep(2134);
-		sliceOrder(id,orders.get(id).sizeRemaining()/2);
-	}
-
-	public void fill(int id, Order o){
-
 	}
 }
