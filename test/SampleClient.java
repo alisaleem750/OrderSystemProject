@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
@@ -26,13 +27,11 @@ public class SampleClient extends Mock implements Client{
 	}
 	
 	@Override
-	public int sendOrder(Object orderType)throws IOException{
+	public synchronized int sendOrder(Object orderType)throws IOException{
 		int size=RANDOM_NUM_GENERATOR.nextInt(5000);
 		/** Ali - below should be price, not instId */
 		int instid=RANDOM_NUM_GENERATOR.nextInt(3);
 		Instrument instrument=INSTRUMENTS[RANDOM_NUM_GENERATOR.nextInt(INSTRUMENTS.length)];
-//		int price = instrument.
-//		NewOrderSingle nos=new NewOrderSingle(size,price,instrument);
 		NewOrderSingle nos=new NewOrderSingle(size,instid,instrument);
 		//show("sendOrder: id="+id+" size="+size+" instrument="+INSTRUMENTS[instid].toString());
 		show("sendOrder: id="+id+" size="+size+" instrument="+nos.instrument.toString());
@@ -40,7 +39,6 @@ public class SampleClient extends Mock implements Client{
 		if(omConn.isConnected()){
 			ObjectOutputStream os=new ObjectOutputStream(omConn.getOutputStream());
 			os.writeObject("newOrderSingle");
-//			os.writeObject("35=D;");
 			os.writeInt(id);
 			os.writeObject(nos);
 			os.flush();
@@ -72,7 +70,7 @@ public class SampleClient extends Mock implements Client{
 
 	enum methods{newOrderSingleAcknowledgement, orderCompleteAcknowledgement, orderPartialFillAcknowledgement, dontKnow};
 	@Override
-	public void messageHandler() throws InterruptedException {
+	public synchronized void messageHandler() throws InterruptedException {
 		
 		ObjectInputStream is;
 		try {
@@ -81,17 +79,12 @@ public class SampleClient extends Mock implements Client{
 				while(0<omConn.getInputStream().available()){
 					is = new ObjectInputStream(omConn.getInputStream());
 					String fix=(String)is.readObject();
-					//if(fix == "deleteOrder"){
-						//fullyFilled((Order)is.readObject());
-						//break;
-					//}
 					System.out.println(Thread.currentThread().getName()+" received fix message: "+fix);
 					String[] fixTags=fix.split(";");
 					int OrderId=-1;
 					char MsgType;
 					int OrdStatus;
 					methods whatToDo=methods.dontKnow;
-					//String[][] fixTagsValues=new String[fixTags.length][2];
 					for(int i=0;i<fixTags.length;i++){
 						String[] tag_value=fixTags[i].split("=");
 						switch(tag_value[0]){
@@ -101,8 +94,8 @@ public class SampleClient extends Mock implements Client{
 								break;
 							case"54"://doSomethingWithOrderBuyOrSell?
 							case"39":OrdStatus=tag_value[1].charAt(0);
-								if(OrdStatus=='A')whatToDo=methods.newOrderSingleAcknowledgement;
-								else if(OrdStatus=='1')whatToDo=methods.orderPartialFillAcknowledgement;
+								if(OrdStatus==('A'))whatToDo=methods.newOrderSingleAcknowledgement;
+//								else if(OrdStatus=='1')whatToDo=methods.orderPartialFillAcknowledgement;
 								else if(OrdStatus=='2')whatToDo=methods.orderCompleteAcknowledgement;
 								break;
 						}
@@ -110,7 +103,8 @@ public class SampleClient extends Mock implements Client{
 					switch(whatToDo){
 						case newOrderSingleAcknowledgement:newOrderSingleAcknowledgement(OrderId); break;
 						case orderCompleteAcknowledgement:orderCompleteAcknowledgement(OrderId); break;
-						case orderPartialFillAcknowledgement:partialFill(OrderId);
+						case orderPartialFillAcknowledgement:partialFill(OrderId); break;
+						case dontKnow: doNothing();
 					}
 					
 					/*message=connection.getMessage();
@@ -120,7 +114,7 @@ public class SampleClient extends Mock implements Client{
 						case 'P':partialFill(message);break;
 						case 'F':fullyFilled(message);
 					}*/
-					show("");
+					//show("");
 				}
 			}
 		} catch (IOException|ClassNotFoundException e){
@@ -129,24 +123,33 @@ public class SampleClient extends Mock implements Client{
 		}
 	}
 
-	private void partialFill(int orderId) {
-		OUT_QUEUE.get(orderId).OrdStatus='1';
+	private void doNothing() {
 	}
 
-	private void orderCompleteAcknowledgement(int orderId) throws InterruptedException {
+	private void partialFill(int orderId) {
+		System.out.println("Order " + orderId + " partially filled.");
+	}
+
+	private void orderCompleteAcknowledgement(int orderId) throws InterruptedException, IOException {
 		NewOrderSingle o = OUT_QUEUE.get(orderId);
-		System.out.println("Order " + o.toString() + "is complete. Removing from queue.");
+		System.out.println("Order " + orderId + " is complete. Removing from queue.");
 		OUT_QUEUE.remove(orderId);
+		BackToOrderManager();
 		if(OUT_QUEUE.isEmpty()){
-			Thread.currentThread().interrupt();
+			//Thread.currentThread().interrupt();
 		}
+	}
+
+	private void BackToOrderManager() throws IOException {
+		ObjectOutputStream os = new ObjectOutputStream(omConn.getOutputStream());
+		os.writeObject("nextTrade");
+
 	}
 
 	private void newOrderSingleAcknowledgement(int OrderId){
 		System.out.println(Thread.currentThread().getName()+" called newOrderSingleAcknowledgement");
 		// Update the order status to new.
 		NewOrderSingle nos = OUT_QUEUE.get(OrderId);
-		nos.OrdStatus='0';
 	}
 /*listen for connections
 once order manager has connected, then send and cancel orders randomly
