@@ -9,7 +9,7 @@ public class Order implements Serializable{
 	public int id; //TODO these should all be longs
 	short orderRouter;
 	public int clientOrderID; //TODO refactor to lowercase C
-	int size;
+	public int size;
 	double[]bestPrices;
 	int bestPriceCount;
 	int clientId;
@@ -69,7 +69,7 @@ public class Order implements Serializable{
 	void
 	createFill(int size,double price){
 		fills.add(new Fill(size,price));
-		if(this.sizeRemaining()==0){
+		if(this.sizeRemaining()<=0){
 			OrdStatus='2';
 		}else{
 			OrdStatus='1';

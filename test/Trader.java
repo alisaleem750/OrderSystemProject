@@ -20,7 +20,7 @@ public class Trader extends Thread implements TradeScreen{
 	}
 	ObjectInputStream  is;
 	ObjectOutputStream os;
-	public void run(){
+	public synchronized void run(){
 		//OM will connect to us
 		try {
 			omConn=ServerSocketFactory.getDefault().createServerSocket(port).accept();
@@ -29,7 +29,7 @@ public class Trader extends Thread implements TradeScreen{
 			InputStream s=omConn.getInputStream(); //if i try to create an objectinputstream before we have data it will block
 			while(true){ /** fix this */
 				if(0<s.available()){
-					  //TODO check if we need to create each time. this will block if no data, but maybe we can still try to create it once instead of repeatedly
+					//TODO check if we need to create each time. this will block if no data, but maybe we can still try to create it once instead of repeatedly
 					is=new ObjectInputStream(s);
 					api method=(api)is.readObject();
 					System.out.println(Thread.currentThread().getName()+" calling: "+method);
@@ -37,10 +37,9 @@ public class Trader extends Thread implements TradeScreen{
 						case newOrder:newOrder(is.readInt(),(Order)is.readObject());break;
 						case price:price(is.readInt(),(Order)is.readObject());break;
 						case cross:is.readInt();is.readObject();break; //TODO
-						case fill:fill(is.readInt(),(Order)is.readObject());break; //TODO
+						case fill:fill(is.readInt(), (Order) is.readObject());break; //TODO
 					}
-				}
-				else{
+				}else{
 					//System.out.println("Trader Waiting for data to be available - sleep 1s");
 					Thread.sleep(1000);
 				}
@@ -51,32 +50,39 @@ public class Trader extends Thread implements TradeScreen{
 		}
 	}
 	@Override
-	public void newOrder(int id,Order order) throws IOException, InterruptedException {
+	public synchronized void newOrder(int id,Order order) throws IOException, InterruptedException {
 		//TODO the order should go in a visual grid, but not needed for test purposes
 		Thread.sleep(2134);
 		orders.put(id, order);
+		System.out.println("T new order: " + id + " client: " + (orders.get(id).getClientId()+1) + " client order id: " + orders.get(id).clientOrderID + " size: " + orders.get(id).sizeRemaining() + "/" +orders.get(id).size);
 		acceptOrder(id);
 	}
 
 	@Override
-	public void acceptOrder(int id) throws IOException {
+	public synchronized void acceptOrder(int id) throws IOException {
 		os=new ObjectOutputStream(omConn.getOutputStream());
 		os.writeObject("acceptOrder");
 		os.writeInt(id);
 		os.flush();
 	}
 
-	public void fill(int id, Order o) throws IOException, InterruptedException {
+	public synchronized void fill(int id, Order o) throws IOException, InterruptedException {
 		orders.remove(id);
 		orders.put(id, o);
-		price(id, o);
+		os=new ObjectOutputStream(omConn.getOutputStream());
+		os.writeObject("updateOrder");
+		os.writeInt(id);
+		os.flush();
+		if (o.getOrderStatus() == '2') {
+			orders.remove(id);
+		}
 	}
 
 	@Override
-	public void price(int id,Order o) throws InterruptedException, IOException {
+	public synchronized void price(int id,Order o) throws InterruptedException, IOException {
 		//TODO should update the trade screen
-		Thread.sleep(2134);
-		System.out.println("T order: " + id + " client id: " + orders.get(id).clientOrderID + " size: " + orders.get(id).sizeRemaining());
+//		Thread.sleep(234);
+		System.out.println("T order: " + id + " client: " + (orders.get(id).getClientId()+1) + " client order id: " + orders.get(id).clientOrderID + " size: " + orders.get(id).sizeRemaining() + "/" +orders.get(id).size);
 		/*if (orders.get(id).sizeRemaining() < 20) {
 			System.out.println("order filled");
 			return;
@@ -85,7 +91,7 @@ public class Trader extends Thread implements TradeScreen{
 	}
 
 	@Override
-	public void sliceOrder(int id, int sliceSize) throws IOException {
+	public synchronized void sliceOrder(int id, int sliceSize) throws IOException {
 		os=new ObjectOutputStream(omConn.getOutputStream());
 		os.writeObject("sliceOrder");
 		os.writeInt(id);
