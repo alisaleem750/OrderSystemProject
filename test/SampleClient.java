@@ -16,10 +16,11 @@ import Ref.Ric;
 public class SampleClient extends Mock implements Client{
 	private static final Random RANDOM_NUM_GENERATOR=new Random();
 	private static final Instrument[] INSTRUMENTS={new Instrument(new Ric("VOD.L")), new Instrument(new Ric("BP.L")), new Instrument(new Ric("BT.L"))};
-	private static final HashMap<Integer, NewOrderSingle> OUT_QUEUE=new HashMap(); //queue for outgoing orders
+	private HashMap<Integer, NewOrderSingle> OUT_QUEUE=new HashMap(); //queue for outgoing orders
 	private int id=0; //message id number
 	private Socket omConn; //connection to order manager
-			
+	private boolean finished;
+
 	public SampleClient(int port) throws IOException{
 		//OM will connect to us
 		omConn=new ServerSocket(port).accept();
@@ -74,7 +75,7 @@ public class SampleClient extends Mock implements Client{
 		
 		ObjectInputStream is;
 		try {
-			while(true){
+			while(!finished){
 				//is.wait(); //this throws an exception!!
 				while(0<omConn.getInputStream().available()){
 					is = new ObjectInputStream(omConn.getInputStream());
@@ -131,22 +132,21 @@ public class SampleClient extends Mock implements Client{
 	}
 
 	private void orderCompleteAcknowledgement(int orderId) throws InterruptedException, IOException {
-		NewOrderSingle o = OUT_QUEUE.get(orderId);
 		System.out.println("Order " + orderId + " is complete. Removing from queue.");
 		OUT_QUEUE.remove(orderId);
-		BackToOrderManager();
 		if(OUT_QUEUE.isEmpty()){
-			//Thread.currentThread().interrupt();
+			finished = true;
 		}
+		BackToOrderManager();
 	}
 
 	private void BackToOrderManager() throws IOException {
 		ObjectOutputStream os = new ObjectOutputStream(omConn.getOutputStream());
-		os.writeObject("nextTrade");
+		os.writeObject("tradeComplete");
 
 	}
 
-	private void newOrderSingleAcknowledgement(int OrderId){
+	private synchronized void newOrderSingleAcknowledgement(int OrderId){
 		System.out.println(Thread.currentThread().getName()+" called newOrderSingleAcknowledgement");
 		// Update the order status to new.
 		NewOrderSingle nos = OUT_QUEUE.get(OrderId);

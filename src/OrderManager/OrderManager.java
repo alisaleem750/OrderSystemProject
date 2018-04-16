@@ -3,10 +3,12 @@ package OrderManager;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import Database.Database;
 import LiveMarketData.LiveMarketData;
@@ -14,14 +16,19 @@ import OrderClient.NewOrderSingle;
 import OrderRouter.Router;
 import TradeScreen.TradeScreen;
 
+import static java.lang.Thread.currentThread;
+import static java.lang.Thread.sleep;
+
 public class OrderManager {
 	private static LiveMarketData liveMarketData;
-	private HashMap<Integer,Order> orders=new HashMap<Integer,Order>(); //debugger will do this line as it gives state to the object
+	private HashMap<Integer,Order> orders = new HashMap<>(); //debugger will do this line as it gives state to the object
 	//currently recording the number of new order messages we get. TODO why? use it for more?
 	private int id=0; //debugger will do this line as it gives state to the object
 	private Socket[] orderRouters; //debugger will skip these lines as they dissapear at compile time into 'the object'/stack
 	private Socket[] clients;
 	private Socket trader;
+	private boolean tradeExecuting;
+	private boolean finished;
 	//@param args the command line arguments
 	public OrderManager(InetSocketAddress[] orderRouters, InetSocketAddress[] clients, InetSocketAddress trader, LiveMarketData liveMarketData)throws IOException, ClassNotFoundException, InterruptedException{
 		this.liveMarketData=liveMarketData;
@@ -45,7 +52,7 @@ public class OrderManager {
 		int clientId,routerId;
 		Socket client,router;
 		//main loop, wait for a message, then process it
-		while(true){
+		while(!finished){
 			//TODO this is pretty cpu intensive, use a more modern polling/interrupt/select approach
 			//we want to use the arrayindex as the clientId, so use traditional for loop instead of foreach
 			for(clientId=0;clientId<this.clients.length;clientId++){ //check if we have data on any of the sockets
@@ -57,6 +64,7 @@ public class OrderManager {
 					switch(method){ //determine the type of message and process it
 						//call the newOrder message with the clientId and the message (clientMessageId,NewOrderSingle)
 						case "newOrderSingle": newOrder(clientId, is.readInt(), (NewOrderSingle)is.readObject());break;
+                        case "tradeComplete": tradeComplete();
 						//case "cancel":
 						//TODO create a default case which errors with "Unknown message type"+...
 					}
@@ -75,7 +83,7 @@ public class OrderManager {
 							slice.bestPrices[routerId]=is.readDouble();
 							slice.bestPriceCount+=1;
 							if(slice.bestPriceCount==slice.bestPrices.length) {
-								reallyRouteOrder(SliceId, slice);
+                                reallyRouteOrder(SliceId, slice);
 							}
 							break;
 						case "newFill":newFill(is.readInt(),is.readInt(),is.readInt(),is.readDouble());break;
@@ -96,7 +104,29 @@ public class OrderManager {
 		}
 	}
 
-	private Socket connect(InetSocketAddress location) throws InterruptedException{
+	private void tradeComplete() throws IOException, InterruptedException {
+		if(!orders.isEmpty()) {
+			for (Order order : orders.values()) {
+				nextTrade(order.id, order);
+			}
+		} else {
+			System.out.println("All orders complete. End of trading day");
+			for(Socket r : orderRouters){
+				ObjectOutputStream os = new ObjectOutputStream(r.getOutputStream());
+				os.writeObject(Router.api.terminateRouter);
+			}
+			finished= true;
+		}
+	}
+
+	private void nextTrade(int id, Order o) throws IOException, InterruptedException {
+	    if(!tradeExecuting){
+	    	price(id, o);
+	    	tradeExecuting = true;
+		}
+    }
+
+    private Socket connect(InetSocketAddress location) throws InterruptedException{
 		boolean connected=false;
 		int tryCounter=0;
 		while(!connected&&tryCounter<600){
@@ -105,7 +135,7 @@ public class OrderManager {
 				s.setKeepAlive(true);
 				return s;
 			}catch (IOException e) {
-				Thread.sleep(1000);
+				sleep(1000);
 				tryCounter++;
 			}
 		}
@@ -113,19 +143,8 @@ public class OrderManager {
 		return null;
 	}
 
-	private synchronized void updateOrder(int id, Order o) throws IOException {
-		ObjectOutputStream os = new ObjectOutputStream(clients[o.getClientId()].getOutputStream());
-		os.writeObject("11="+o.clientOrderID +";35=D;54=1;39="+o.getOrderStatus());
-		os.flush();
-		if(o.getOrdStatus() == '2'){
-//			deleteOrder(id);
-		} else {
-			price(id, orders.get(id));
-		}
-	}
-
-	private synchronized void newOrder(int clientId, int clientOrderId, NewOrderSingle nos) throws IOException{
-		orders.put(id, new Order(clientId, clientOrderId, nos.instrument, nos.size));
+	private synchronized void newOrder(int clientId, int clientOrderId, NewOrderSingle nos) throws IOException, InterruptedException {
+		orders.put(id, new Order(id, clientId, clientOrderId, nos.instrument, nos.size));
 		//send a message to the client with 39=A; //OrdStatus is Fix 39, 'A' is 'Pending New'
 		ObjectOutputStream os=new ObjectOutputStream(clients[clientId].getOutputStream());
 		//newOrderSingle acknowledgement
@@ -137,14 +156,15 @@ public class OrderManager {
 		//don't do anything else with the order, as we are simulating high touch orders and so need to wait for the trader to accept the order
 		id++;
 	}
-	private synchronized void sendOrderToTrader(int id,Order o,Object method) throws IOException{
+
+    private synchronized void sendOrderToTrader(int id,Order o,Object method) throws IOException, InterruptedException {
 		ObjectOutputStream ost=new ObjectOutputStream(trader.getOutputStream());
 		ost.writeObject(method);
 		ost.writeInt(id);
 		ost.writeObject(o);
 		ost.flush();
 	}
-	public synchronized void acceptOrder(int id) throws IOException{
+    public synchronized void acceptOrder(int id) throws IOException, InterruptedException {
 		Order o=orders.get(id);
 		if(o.OrdStatus!='A'){ //Pending New
 			System.out.println("error accepting order that has already been accepted");
@@ -156,26 +176,9 @@ public class OrderManager {
 		os.writeObject("11="+o.clientOrderID +";35=D;54=1;39="+o.getOrdStatus());
 		os.flush();
 
-		price(id,o);
+		nextTrade(id, o);
 	}
-	public void sliceOrder(int id,int sliceSize) throws IOException{
-		Order o=orders.get(id);
-		//slice the order. We have to check this is a valid size.
-		//Order has a list of slices, and a list of fills, each slice is a childorder and each fill is associated with either a child order or the original order
-		if(sliceSize>o.sizeRemaining()){
-			sliceSize=o.sizeRemaining();
-		}
-		int sliceId=o.newSlice(sliceSize);
-		o.slices.get(sliceId).setInitialPrice(o.initialMarketPrice);
-		Order slice=o.slices.get(sliceId);
-//		internalCross(id,slice);
-		int sizeRemaining=slice.sizeRemaining();
-		if(sizeRemaining>0){
-			routeOrder(id,sliceId,sizeRemaining,slice);
-		}
-
-	}
-	private void internalCross(int id, Order o) throws IOException{
+    private void internalCross(int id, Order o) throws IOException, InterruptedException {
 		for(Map.Entry<Integer, Order>entry:orders.entrySet()){
 			if(entry.getKey().intValue()==id)continue;
 			Order matchingOrder=entry.getValue();
@@ -197,36 +200,77 @@ public class OrderManager {
 			}
 		}
 	}
-	private void cancelOrder(){
+    private void cancelOrder(){
 		/** implement in SampleClient */
 	}
-
-	private void deleteOrder(int id) throws IOException {
+    private void deleteOrder(int id) throws IOException {
 		orders.remove(id);
 	}
 
-
-	private synchronized void newFill(int id,int sliceId,int size,double price) throws IOException{
+	private synchronized void newFill(int id,int sliceId,int size,double price) throws IOException, InterruptedException {
 		Order o=orders.get(id);
 		Order slice = o.slices.get(sliceId);
 		slice.createFill(size, price);
-//		if(slice.sizeRemaining() > 0){
-//			routeOrder(id, slice.id, slice.sizeRemaining(), slice);
-//		}
+		if(slice.sizeRemaining() > 0){
+			slice.createFill(slice.sizeRemaining(), price);
+		}
 		if(o.sizeRemaining()<=0){
 			o.setOrdStatus('2');
-//			Database.write(o);
 			System.out.println("Completed OM order: " + o.id + " client " + (o.getClientId()+1) + " client order id: " + o.clientOrderID);
+			sendOrderToTrader(id, o, TradeScreen.api.fill);
+			System.out.println("sent 'fill' to trader");
+//			updateOrder(id, o);
 		} else {
 			o.setOrdStatus('1');
-		}
-		if(o.sizeRemaining() > 0) {
-			System.out.println("OM order: " + o.id + " client " + (orders.get(id).getClientId()+1)+ " client order id: " + (orders.get(id).clientOrderID) + " size: " + o.sizeRemaining() + "/" +o.size);
-			System.out.println("sent 'fill' to trader");
-			sendOrderToTrader(id, o, TradeScreen.api.fill);
+            System.out.println("OM order: " + o.id + " client " + (orders.get(id).getClientId()+1)+ " client order id: " + (orders.get(id).clientOrderID) + " size: " + o.sizeRemaining() + "/" +o.size);
+            sendOrderToTrader(id, o, TradeScreen.api.fill);
+            System.out.println("sent 'fill' to trader");
 		}
 	}
-	private synchronized void routeOrder(int id,int sliceId,int size,Order order) throws IOException{
+
+    private synchronized void updateOrder(int id, Order o) throws IOException, InterruptedException {
+        if(orders.containsKey(id)) {
+            ObjectOutputStream os = new ObjectOutputStream(clients[o.getClientId()].getOutputStream());
+            os.writeObject("11=" + o.clientOrderID + ";35=D;54=1;39=" + o.getOrderStatus());
+            os.flush();
+            if (o.getOrdStatus() == '2') {
+                deleteOrder(id);
+				tradeExecuting = false;
+                System.out.println("update order: delete Order");
+            } else {
+//                sliceOrder(id, o.sizeRemaining());
+				Order order = randomOrder();
+				id = order.id;
+                price(id, order);
+            }
+        }
+    }
+
+	private Order randomOrder() {
+		Random rand = new Random();
+		int i = rand.nextInt(orders.size());
+		return orders.get(i);
+	}
+
+	public void sliceOrder(int id,int sliceSize) throws IOException, InterruptedException {
+        Order o=orders.get(id);
+        //slice the order. We have to check this is a valid size.
+        //Order has a list of slices, and a list of fills, each slice is a childorder and each fill is associated with either a child order or the original order
+        if(sliceSize>o.sizeRemaining()){
+            sliceSize=o.sizeRemaining();
+        }
+        int sliceId=o.newSlice(sliceSize);
+        o.slices.get(sliceId).setInitialPrice(o.initialMarketPrice);
+        Order slice=o.slices.get(sliceId);
+//		internalCross(id,slice);
+        int sizeRemaining=slice.sizeRemaining();
+        if(sizeRemaining>0){
+            routeOrder(id,sliceId,sizeRemaining,slice);
+        } else {
+            updateOrder(id, o);
+        }
+    }
+    private synchronized void routeOrder(int id,int sliceId,int size,Order order) throws IOException{
 		for(Socket r:orderRouters){
 			ObjectOutputStream os=new ObjectOutputStream(r.getOutputStream());
 			os.writeObject(Router.api.priceAtSize);
@@ -240,29 +284,29 @@ public class OrderManager {
 		order.bestPrices=new double[orderRouters.length];
 		order.bestPriceCount=0;
 	}
-	private synchronized void reallyRouteOrder(int sliceId,Order slice) throws IOException{
+	private synchronized void reallyRouteOrder(int sliceId,Order order) throws IOException{
 		//TODO this assumes we are buying rather than selling
 		int minIndex=0;
-		double min=slice.bestPrices[0];
-		for(int i=1;i<slice.bestPrices.length;i++){
-			if(min>slice.bestPrices[i]){
+		double min=order.bestPrices[0];
+		for(int i=1;i<order.bestPrices.length;i++){
+			if(min>order.bestPrices[i]){
 				minIndex=i;
-				min=slice.bestPrices[i];
+				min=order.bestPrices[i];
 			}
 		}
 		ObjectOutputStream os=new ObjectOutputStream(orderRouters[minIndex].getOutputStream());
 		os.writeObject(Router.api.routeOrder);
-		os.writeInt(slice.id);
+		os.writeInt(order.id);
 		os.writeInt(sliceId);
-		os.writeInt(slice.sizeRemaining());
-		os.writeObject(slice.instrument);
+		os.writeInt(order.sizeRemaining());
+		os.writeObject(order.instrument);
 		os.flush();
 	}
 	private void sendCancel(Order order,Router orderRouter){
 		//orderRouter.sendCancel(order);
 		//order.orderRouter.writeObject(order);
 	}
-	private synchronized void price(int id,Order o) throws IOException{
+	private synchronized void price(int id,Order o) throws IOException, InterruptedException {
 		liveMarketData.setPrice(o);
 		sendOrderToTrader(id, o, TradeScreen.api.price);
 	}
