@@ -90,7 +90,7 @@ public class OrderManager {
 				switch(method){
 					case "acceptOrder":acceptOrder(is.readInt());break;
 					case "sliceOrder":sliceOrder(is.readInt(), is.readInt());break;
-					case "updateOrder":updateOrder(is.readInt());break;
+					case "updateOrder":updateOrder(is.readInt(), (Order)is.readObject());break;
 				}
 			}
 		}
@@ -113,13 +113,11 @@ public class OrderManager {
 		return null;
 	}
 
-	private synchronized void updateOrder(int id) throws IOException {
-		Order order = orders.get(id);
-		ObjectOutputStream os = new ObjectOutputStream(clients[order.getClientId()].getOutputStream());
-		os.writeObject("11="+order.clientOrderID +";35=D;54=1;39="+order.getOrderStatus());
+	private synchronized void updateOrder(int id, Order o) throws IOException {
+		ObjectOutputStream os = new ObjectOutputStream(clients[o.getClientId()].getOutputStream());
+		os.writeObject("11="+o.clientOrderID +";35=D;54=1;39="+o.getOrderStatus());
 		os.flush();
-		notifyAll();
-		if(order.getOrdStatus() == '2'){
+		if(o.getOrdStatus() == '2'){
 //			deleteOrder(id);
 		} else {
 			price(id, orders.get(id));
@@ -150,7 +148,6 @@ public class OrderManager {
 		Order o=orders.get(id);
 		if(o.OrdStatus!='A'){ //Pending New
 			System.out.println("error accepting order that has already been accepted");
-			return;
 		} /** else statement */
 		o.OrdStatus='0'; //New
 		ObjectOutputStream os=new ObjectOutputStream(clients[o.clientId].getOutputStream());
@@ -161,7 +158,7 @@ public class OrderManager {
 
 		price(id,o);
 	}
-	public synchronized void sliceOrder(int id,int sliceSize) throws IOException{
+	public void sliceOrder(int id,int sliceSize) throws IOException{
 		Order o=orders.get(id);
 		//slice the order. We have to check this is a valid size.
 		//Order has a list of slices, and a list of fills, each slice is a childorder and each fill is associated with either a child order or the original order
@@ -172,7 +169,7 @@ public class OrderManager {
 		o.slices.get(sliceId).setInitialPrice(o.initialMarketPrice);
 		Order slice=o.slices.get(sliceId);
 //		internalCross(id,slice);
-		int sizeRemaining=o.slices.get(sliceId).sizeRemaining();
+		int sizeRemaining=slice.sizeRemaining();
 		if(sizeRemaining>0){
 			routeOrder(id,sliceId,sizeRemaining,slice);
 		}
@@ -211,7 +208,11 @@ public class OrderManager {
 
 	private synchronized void newFill(int id,int sliceId,int size,double price) throws IOException{
 		Order o=orders.get(id);
-		o.slices.get(sliceId).createFill(size, price);
+		Order slice = o.slices.get(sliceId);
+		slice.createFill(size, price);
+//		if(slice.sizeRemaining() > 0){
+//			routeOrder(id, slice.id, slice.sizeRemaining(), slice);
+//		}
 		if(o.sizeRemaining()<=0){
 			o.setOrdStatus('2');
 //			Database.write(o);
@@ -219,8 +220,8 @@ public class OrderManager {
 		} else {
 			o.setOrdStatus('1');
 		}
-		System.out.println("OM order: " + o.id + " client " + (orders.get(id).getClientId()+1)+ " client order id: " + (orders.get(id).clientOrderID) + " size: " + o.sizeRemaining() + "/" +o.size);
 		if(o.sizeRemaining() > 0) {
+			System.out.println("OM order: " + o.id + " client " + (orders.get(id).getClientId()+1)+ " client order id: " + (orders.get(id).clientOrderID) + " size: " + o.sizeRemaining() + "/" +o.size);
 			System.out.println("sent 'fill' to trader");
 			sendOrderToTrader(id, o, TradeScreen.api.fill);
 		}
@@ -232,29 +233,29 @@ public class OrderManager {
 			os.writeInt(id);
 			os.writeInt(sliceId);
 			os.writeObject(order.instrument);
-			os.writeInt(order.sizeRemaining());
+			os.writeInt(size);
 			os.flush();
 		}
 		//need to wait for these prices to come back before routing
 		order.bestPrices=new double[orderRouters.length];
 		order.bestPriceCount=0;
 	}
-	private synchronized void reallyRouteOrder(int sliceId,Order o) throws IOException{
+	private synchronized void reallyRouteOrder(int sliceId,Order slice) throws IOException{
 		//TODO this assumes we are buying rather than selling
 		int minIndex=0;
-		double min=o.bestPrices[0];
-		for(int i=1;i<o.bestPrices.length;i++){
-			if(min>o.bestPrices[i]){
+		double min=slice.bestPrices[0];
+		for(int i=1;i<slice.bestPrices.length;i++){
+			if(min>slice.bestPrices[i]){
 				minIndex=i;
-				min=o.bestPrices[i];
+				min=slice.bestPrices[i];
 			}
 		}
 		ObjectOutputStream os=new ObjectOutputStream(orderRouters[minIndex].getOutputStream());
 		os.writeObject(Router.api.routeOrder);
-		os.writeInt(o.id);
+		os.writeInt(slice.id);
 		os.writeInt(sliceId);
-		os.writeInt(o.sizeRemaining());
-		os.writeObject(o.instrument);
+		os.writeInt(slice.sizeRemaining());
+		os.writeObject(slice.instrument);
 		os.flush();
 	}
 	private void sendCancel(Order order,Router orderRouter){

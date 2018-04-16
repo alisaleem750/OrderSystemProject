@@ -72,6 +72,7 @@ public class Trader extends Thread implements TradeScreen{
 		os=new ObjectOutputStream(omConn.getOutputStream());
 		os.writeObject("updateOrder");
 		os.writeInt(id);
+		os.writeObject(o);
 		os.flush();
 		if (o.getOrderStatus() == '2') {
 			orders.remove(id);
@@ -79,7 +80,7 @@ public class Trader extends Thread implements TradeScreen{
 	}
 
 	@Override
-	public synchronized void price(int id,Order o) throws InterruptedException, IOException {
+	public void price(int id,Order o) throws InterruptedException, IOException {
 		//TODO should update the trade screen
 //		Thread.sleep(234);
 		System.out.println("T order: " + id + " client: " + (orders.get(id).getClientId()+1) + " client order id: " + orders.get(id).clientOrderID + " size: " + orders.get(id).sizeRemaining() + "/" +orders.get(id).size);
