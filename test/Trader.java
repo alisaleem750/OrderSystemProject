@@ -69,7 +69,12 @@ public class Trader extends Thread implements TradeScreen{
 	public synchronized void fill(int id, Order o) throws IOException, InterruptedException {
 		orders.remove(id);
 		orders.put(id, o);
-        System.out.println("T order: " + id + " client: " + (orders.get(id).getClientId()+1) + " client order id: " + orders.get(id).clientOrderID + " size: " + orders.get(id).sizeRemaining() + "/" +orders.get(id).size);
+        os=new ObjectOutputStream(omConn.getOutputStream());
+		os.writeObject("updateOrder");
+		os.writeInt(id);
+		os.writeObject(o);
+		os.flush();
+		System.out.println("T order: " + id + " client: " + (orders.get(id).getClientId()+1) + " client order id: " + orders.get(id).clientOrderID + " size: " + orders.get(id).sizeRemaining() + "/" +orders.get(id).size);
 		if (o.getOrderStatus() == '2') {
 			System.out.println("Trader removed order");
 			orders.remove(id);
@@ -77,21 +82,11 @@ public class Trader extends Thread implements TradeScreen{
 				finished=true;
 			}
 		}
-        os=new ObjectOutputStream(omConn.getOutputStream());
-		os.writeObject("updateOrder");
-		os.writeInt(id);
-		os.writeObject(o);
-		os.flush();
 	}
 
 	@Override
 	public synchronized void price(int id,Order o) throws InterruptedException, IOException {
 		//TODO should update the trade screen
-//		Thread.sleep(234);
-		/*if (orders.get(id).sizeRemaining() < 20) {
-			System.out.println("order filled");
-			return;
-		}*/
 		if(o.sizeRemaining() < o.size/2){
             sliceOrder(id,orders.get(id).sizeRemaining());
         } else {

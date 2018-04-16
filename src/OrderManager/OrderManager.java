@@ -3,6 +3,7 @@ package OrderManager;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.HashMap;
@@ -110,6 +111,10 @@ public class OrderManager {
 			}
 		} else {
 			System.out.println("All orders complete. End of trading day");
+			for(Socket r : orderRouters){
+				ObjectOutputStream os = new ObjectOutputStream(r.getOutputStream());
+				os.writeObject(Router.api.terminateRouter);
+			}
 			finished= true;
 		}
 	}
@@ -206,14 +211,15 @@ public class OrderManager {
 		Order o=orders.get(id);
 		Order slice = o.slices.get(sliceId);
 		slice.createFill(size, price);
-//		if(slice.sizeRemaining() > 0){
-//			slice.createFill(slice.sizeRemaining(), price);
-//		}
+		if(slice.sizeRemaining() > 0){
+			slice.createFill(slice.sizeRemaining(), price);
+		}
 		if(o.sizeRemaining()<=0){
 			o.setOrdStatus('2');
-//			Database.write(o);
 			System.out.println("Completed OM order: " + o.id + " client " + (o.getClientId()+1) + " client order id: " + o.clientOrderID);
-			updateOrder(id, o);
+			sendOrderToTrader(id, o, TradeScreen.api.fill);
+			System.out.println("sent 'fill' to trader");
+//			updateOrder(id, o);
 		} else {
 			o.setOrdStatus('1');
             System.out.println("OM order: " + o.id + " client " + (orders.get(id).getClientId()+1)+ " client order id: " + (orders.get(id).clientOrderID) + " size: " + o.sizeRemaining() + "/" +o.size);
@@ -230,7 +236,6 @@ public class OrderManager {
             if (o.getOrdStatus() == '2') {
                 deleteOrder(id);
 				tradeExecuting = false;
-//                this.id = 1;
                 System.out.println("update order: delete Order");
             } else {
 //                sliceOrder(id, o.sizeRemaining());
@@ -240,7 +245,6 @@ public class OrderManager {
     }
 
     public void sliceOrder(int id,int sliceSize) throws IOException, InterruptedException {
-        System.out.println("OM SLICE");
         Order o=orders.get(id);
         //slice the order. We have to check this is a valid size.
         //Order has a list of slices, and a list of fills, each slice is a childorder and each fill is associated with either a child order or the original order

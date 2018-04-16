@@ -16,6 +16,8 @@ public class SampleRouter extends Thread implements Router{
 	private static final Instrument[] INSTRUMENTS={new Instrument(new Ric("VOD.L")), new Instrument(new Ric("BP.L")), new Instrument(new Ric("BT.L"))};
 	private Socket omConn;
 	private int port;
+	private boolean finished;
+
 	public SampleRouter(String name,int port){
 		this.setName(name);
 		this.port=port;
@@ -26,7 +28,7 @@ public class SampleRouter extends Thread implements Router{
 		//OM will connect to us
 		try {
 			omConn=ServerSocketFactory.getDefault().createServerSocket(port).accept();
-			while(true){
+			while(!finished){
 				if(0<omConn.getInputStream().available()){
 					is=new ObjectInputStream(omConn.getInputStream());
 					Router.api methodName=(Router.api)is.readObject();
@@ -34,6 +36,7 @@ public class SampleRouter extends Thread implements Router{
 					switch(methodName){
 						case routeOrder:routeOrder(is.readInt(),is.readInt(),is.readInt(),(Instrument)is.readObject());break;
 						case priceAtSize:priceAtSize(is.readInt(),is.readInt(),(Instrument)is.readObject(),is.readInt());break;
+						case terminateRouter: terminate();
 					}
 				}else{
 					Thread.sleep(100);
@@ -45,6 +48,11 @@ public class SampleRouter extends Thread implements Router{
 
 		}
 	}
+
+	private void terminate() {
+		finished = true;
+	}
+
 	@Override
 	public synchronized void routeOrder(int id,int sliceId,int size,Instrument i) throws IOException, InterruptedException{ //MockI.show(""+order);
 		int fillSize=RANDOM_NUM_GENERATOR.nextInt(size+1);

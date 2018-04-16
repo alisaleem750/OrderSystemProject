@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/test/SampleClient.java" line="33" />
+    <bookmark url="file://$PROJECT_DIR$/test/SampleClient.java" line="34" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="83ae077c-67fd-45d6-9334-7348193a33e7" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/out/production/OrderSystemProject/OrderManager/Order.class" afterPath="$PROJECT_DIR$/out/production/OrderSystemProject/OrderManager/Order.class" />
       <change beforePath="$PROJECT_DIR$/out/production/OrderSystemProject/OrderManager/OrderManager.class" afterPath="$PROJECT_DIR$/out/production/OrderSystemProject/OrderManager/OrderManager.class" />
+      <change beforePath="$PROJECT_DIR$/out/production/OrderSystemProject/OrderRouter/Router$api.class" afterPath="$PROJECT_DIR$/out/production/OrderSystemProject/OrderRouter/Router$api.class" />
+      <change beforePath="$PROJECT_DIR$/out/test/OrderSystemProject/SampleClient$1.class" afterPath="$PROJECT_DIR$/out/test/OrderSystemProject/SampleClient$1.class" />
+      <change beforePath="$PROJECT_DIR$/out/test/OrderSystemProject/SampleClient$methods.class" afterPath="$PROJECT_DIR$/out/test/OrderSystemProject/SampleClient$methods.class" />
       <change beforePath="$PROJECT_DIR$/out/test/OrderSystemProject/SampleClient.class" afterPath="$PROJECT_DIR$/out/test/OrderSystemProject/SampleClient.class" />
+      <change beforePath="$PROJECT_DIR$/out/test/OrderSystemProject/SampleRouter$1.class" afterPath="$PROJECT_DIR$/out/test/OrderSystemProject/SampleRouter$1.class" />
       <change beforePath="$PROJECT_DIR$/out/test/OrderSystemProject/SampleRouter.class" afterPath="$PROJECT_DIR$/out/test/OrderSystemProject/SampleRouter.class" />
+      <change beforePath="$PROJECT_DIR$/out/test/OrderSystemProject/Trader$1.class" afterPath="$PROJECT_DIR$/out/test/OrderSystemProject/Trader$1.class" />
       <change beforePath="$PROJECT_DIR$/out/test/OrderSystemProject/Trader.class" afterPath="$PROJECT_DIR$/out/test/OrderSystemProject/Trader.class" />
-      <change beforePath="$PROJECT_DIR$/src/OrderManager/Order.java" afterPath="$PROJECT_DIR$/src/OrderManager/Order.java" />
       <change beforePath="$PROJECT_DIR$/src/OrderManager/OrderManager.java" afterPath="$PROJECT_DIR$/src/OrderManager/OrderManager.java" />
+      <change beforePath="$PROJECT_DIR$/src/OrderRouter/Router.java" afterPath="$PROJECT_DIR$/src/OrderRouter/Router.java" />
       <change beforePath="$PROJECT_DIR$/test/SampleClient.java" afterPath="$PROJECT_DIR$/test/SampleClient.java" />
       <change beforePath="$PROJECT_DIR$/test/SampleRouter.java" afterPath="$PROJECT_DIR$/test/SampleRouter.java" />
       <change beforePath="$PROJECT_DIR$/test/Trader.java" afterPath="$PROJECT_DIR$/test/Trader.java" />
@@ -39,10 +42,10 @@
                   <entry file="file://$PROJECT_DIR$/test/SampleClient.java">
                     <provider selected="true" editor-type-id="text-editor">
                       <state relative-caret-position="362">
-                        <caret line="129" column="0" lean-forward="false" selection-start-line="129" selection-start-column="0" selection-end-line="129" selection-end-column="0" />
+                        <caret line="130" column="0" lean-forward="false" selection-start-line="130" selection-start-column="0" selection-end-line="130" selection-end-column="0" />
                         <folding>
                           <element signature="imports" expanded="true" />
-                          <element signature="e#4447#4448#0" expanded="true" />
+                          <element signature="e#4463#4464#0" expanded="true" />
                         </folding>
                       </state>
                     </provider>
@@ -51,10 +54,12 @@
                 <file leaf-file-name="SampleRouter.java" pinned="false" current-in-tab="true">
                   <entry file="file://$PROJECT_DIR$/test/SampleRouter.java">
                     <provider selected="true" editor-type-id="text-editor">
-                      <state relative-caret-position="296">
-                        <caret line="24" column="32" lean-forward="false" selection-start-line="24" selection-start-column="29" selection-end-line="24" selection-end-column="32" />
+                      <state relative-caret-position="118">
+                        <caret line="18" column="11" lean-forward="true" selection-start-line="18" selection-start-column="11" selection-end-line="18" selection-end-column="11" />
                         <folding>
                           <element signature="imports" expanded="true" />
+                          <element signature="e#1671#1672#0" expanded="true" />
+                          <element signature="e#1693#1694#0" expanded="true" />
                         </folding>
                       </state>
                     </provider>
@@ -67,12 +72,12 @@
                 <file leaf-file-name="SampleClient.java" pinned="false" current-in-tab="true">
                   <entry file="file://$PROJECT_DIR$/test/SampleClient.java">
                     <provider selected="true" editor-type-id="text-editor">
-                      <state relative-caret-position="551">
-                        <caret line="144" column="37" lean-forward="false" selection-start-line="144" selection-start-column="37" selection-end-line="144" selection-end-column="37" />
+                      <state relative-caret-position="459">
+                        <caret line="135" column="0" lean-forward="false" selection-start-line="135" selection-start-column="0" selection-end-line="135" selection-end-column="0" />
                         <folding>
                           <element signature="imports" expanded="true" />
-                          <element signature="e#4379#4380#0" expanded="true" />
-                          <element signature="e#4447#4448#0" expanded="true" />
+                          <element signature="e#4395#4396#0" expanded="true" />
+                          <element signature="e#4463#4464#0" expanded="true" />
                         </folding>
                       </state>
                     </provider>
@@ -92,8 +97,8 @@
           <file leaf-file-name="OrderManager.java" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/OrderManager/OrderManager.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="-1568">
-                  <caret line="29" column="4" lean-forward="true" selection-start-line="29" selection-start-column="4" selection-end-line="29" selection-end-column="29" />
+                <state relative-caret-position="0">
+                  <caret line="240" column="52" lean-forward="false" selection-start-line="240" selection-start-column="52" selection-end-line="240" selection-end-column="52" />
                   <folding>
                     <element signature="imports" expanded="true" />
                   </folding>
@@ -163,8 +168,8 @@
           <file leaf-file-name="MockOM.java" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/test/MockOM.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="301">
-                  <caret line="24" column="0" lean-forward="false" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
+                <state relative-caret-position="306">
+                  <caret line="24" column="43" lean-forward="false" selection-start-line="24" selection-start-column="43" selection-end-line="24" selection-end-column="43" />
                   <folding />
                 </state>
               </provider>
@@ -180,11 +185,21 @@
               </provider>
             </entry>
           </file>
+          <file leaf-file-name="MockClient.java" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/test/MockClient.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="340">
+                  <caret line="20" column="32" lean-forward="false" selection-start-line="20" selection-start-column="23" selection-end-line="20" selection-end-column="32" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
           <file leaf-file-name="Trader.java" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/test/Trader.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="262">
-                  <caret line="76" column="30" lean-forward="false" selection-start-line="76" selection-start-column="30" selection-end-line="76" selection-end-column="30" />
+                <state relative-caret-position="472">
+                  <caret line="81" column="28" lean-forward="true" selection-start-line="81" selection-start-column="28" selection-end-line="81" selection-end-column="28" />
                   <folding />
                 </state>
               </provider>
@@ -246,7 +261,10 @@
       <find>update order</find>
       <find>run</find>
       <find>sendorder</find>
+      <find>trader re</find>
       <find>sleep</find>
+      <find>is complete</find>
+      <find>client</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -262,12 +280,12 @@
       <list>
         <option value="$PROJECT_DIR$/test/MockClient.java" />
         <option value="$PROJECT_DIR$/src/OrderClient/NewOrderSingle.java" />
-        <option value="$PROJECT_DIR$/test/SampleRouter.java" />
         <option value="$PROJECT_DIR$/test/MockOM.java" />
-        <option value="$PROJECT_DIR$/test/SampleClient.java" />
         <option value="$PROJECT_DIR$/src/OrderManager/Order.java" />
-        <option value="$PROJECT_DIR$/src/OrderManager/OrderManager.java" />
         <option value="$PROJECT_DIR$/test/Trader.java" />
+        <option value="$PROJECT_DIR$/test/SampleRouter.java" />
+        <option value="$PROJECT_DIR$/test/SampleClient.java" />
+        <option value="$PROJECT_DIR$/src/OrderManager/OrderManager.java" />
       </list>
     </option>
   </component>
@@ -533,7 +551,7 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Run with VisualVM" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Run with VisualVM" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32934782" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.23507462" sideWeight="0.5" order="4" side_tool="false" content_ui="combo" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="5" side_tool="true" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -591,27 +609,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/OrderManager/OrderManager.java</url>
-          <line>232</line>
-          <properties />
-          <option name="timeStamp" value="6" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/OrderManager/OrderManager.java</url>
-          <line>107</line>
-          <properties />
-          <option name="timeStamp" value="8" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/OrderManager/OrderManager.java</url>
-          <line>246</line>
-          <properties />
-          <option name="timeStamp" value="9" />
-        </line-breakpoint>
-      </breakpoints>
-      <option name="time" value="10" />
+      <option name="time" value="15" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -701,6 +699,8 @@
           <caret line="51" column="0" lean-forward="false" selection-start-line="51" selection-start-column="0" selection-end-line="51" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#1671#1672#0" expanded="true" />
+            <element signature="e#1693#1694#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -747,6 +747,8 @@
           <caret line="15" column="70" lean-forward="false" selection-start-line="15" selection-start-column="70" selection-end-line="15" selection-end-column="70" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#1671#1672#0" expanded="true" />
+            <element signature="e#1693#1694#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -797,7 +799,7 @@
           <caret line="144" column="34" lean-forward="false" selection-start-line="144" selection-start-column="34" selection-end-line="144" selection-end-column="34" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#4447#4448#0" expanded="true" />
+            <element signature="e#4463#4464#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -839,7 +841,7 @@
           <caret line="121" column="55" lean-forward="false" selection-start-line="121" selection-start-column="55" selection-end-line="121" selection-end-column="55" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#4447#4448#0" expanded="true" />
+            <element signature="e#4463#4464#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -850,6 +852,8 @@
           <caret line="30" column="0" lean-forward="true" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#1671#1672#0" expanded="true" />
+            <element signature="e#1693#1694#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -984,35 +988,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/MockOM.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="301">
-          <caret line="24" column="0" lean-forward="false" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/SampleRouter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="296">
-          <caret line="24" column="32" lean-forward="false" selection-start-line="24" selection-start-column="29" selection-end-line="24" selection-end-column="32" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/SampleClient.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="362">
-          <caret line="129" column="0" lean-forward="false" selection-start-line="129" selection-start-column="0" selection-end-line="129" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#4447#4448#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/OrderManager/Order.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="219">
@@ -1024,18 +999,57 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/test/SampleRouter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="118">
+          <caret line="18" column="11" lean-forward="true" selection-start-line="18" selection-start-column="11" selection-end-line="18" selection-end-column="11" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1671#1672#0" expanded="true" />
+            <element signature="e#1693#1694#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/MockOM.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="24" column="43" lean-forward="false" selection-start-line="24" selection-start-column="43" selection-end-line="24" selection-end-column="43" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/MockClient.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="20" column="32" lean-forward="false" selection-start-line="20" selection-start-column="23" selection-end-line="20" selection-end-column="32" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/SampleClient.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="362">
+          <caret line="130" column="0" lean-forward="false" selection-start-line="130" selection-start-column="0" selection-end-line="130" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#4463#4464#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/test/Trader.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="262">
-          <caret line="76" column="30" lean-forward="false" selection-start-line="76" selection-start-column="30" selection-end-line="76" selection-end-column="30" />
+        <state relative-caret-position="472">
+          <caret line="81" column="28" lean-forward="true" selection-start-line="81" selection-start-column="28" selection-end-line="81" selection-end-column="28" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/OrderManager/OrderManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1568">
-          <caret line="29" column="4" lean-forward="true" selection-start-line="29" selection-start-column="4" selection-end-line="29" selection-end-column="29" />
+        <state relative-caret-position="0">
+          <caret line="240" column="52" lean-forward="false" selection-start-line="240" selection-start-column="52" selection-end-line="240" selection-end-column="52" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
