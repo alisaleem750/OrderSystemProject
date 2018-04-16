@@ -8,6 +8,7 @@ import Ref.Instrument;
 public class Order implements Serializable{
 	public int id; //TODO these should all be longs
 	short orderRouter;
+	public String type;
 	public int clientOrderID; //TODO refactor to lowercase C
 	public int size;
 	double[]bestPrices;
@@ -20,7 +21,7 @@ public class Order implements Serializable{
 	char OrdStatus='A'; //OrdStatus is Fix 39, 'A' is 'Pending New'
 	//Status state;
 
-	public Order(int id, int clientId, int ClientOrderID, Instrument instrument, int size){
+	public Order(int id, int clientId, int ClientOrderID, Instrument instrument, int size, String type){
 		this.id = id;
 	    this.clientOrderID =ClientOrderID;
 		this.size=size;
@@ -28,6 +29,7 @@ public class Order implements Serializable{
 		this.instrument=instrument;
 		fills=new ArrayList<Fill>();
 		slices=new ArrayList<Order>();
+		this.type = type;
 	}
 
 	public char getOrderStatus() {
@@ -49,7 +51,7 @@ public class Order implements Serializable{
 		return totalSizeOfSlices;
 	}
 	public int newSlice(int sliceSize){
-		slices.add(new Order(id, clientId, clientOrderID,instrument,sliceSize));
+		slices.add(new Order(id, clientId, clientOrderID,instrument,sliceSize, type));
 		return slices.size()-1;
 	}
 
@@ -111,7 +113,7 @@ public class Order implements Serializable{
 					matchingOrder.createFill(sliceSize, initialMarketPrice);
 				}else{
 					slice.createFill(mParent,initialMarketPrice);
-					matchingOrder.createFill(mParent, initialMarketPrice);					
+					matchingOrder.createFill(mParent, initialMarketPrice);
 				}
 			}
 			//no point continuing if we didn't fill this slice, as we must already have fully filled the matchingOrder
@@ -155,4 +157,12 @@ public class Order implements Serializable{
 	public void setOrdStatus(char OrdStatus){	
 		this.OrdStatus = OrdStatus;	
 	}
+
+	public int getFixTagOrderType(){
+	    if(type.equals("buy")){
+	        return 1;
+        } else {
+	        return 2;
+        }
+    }
 }

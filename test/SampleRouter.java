@@ -32,7 +32,7 @@ public class SampleRouter extends Thread implements Router{
 				if(0<omConn.getInputStream().available()){
 					is=new ObjectInputStream(omConn.getInputStream());
 					Router.api methodName=(Router.api)is.readObject();
-					System.out.println("Order Router recieved method call for:"+methodName);
+//					System.out.println("Order Router recieved method call for:"+methodName);
 					switch(methodName){
 						case routeOrder:routeOrder(is.readInt(),is.readInt(),is.readInt(),(Instrument)is.readObject());break;
 						case priceAtSize:priceAtSize(is.readInt(),is.readInt(),(Instrument)is.readObject(),is.readInt());break;
