@@ -11,6 +11,7 @@ public class Main{
 		//start sample clients
 		(new MockClient("Client 1",2000)).start();
 		(new MockClient("Client 2",2001)).start();
+		(new MockClient("Client 3",2002)).start();
 		
 		//start sample routers
 		(new SampleRouter("Router LSE",2010)).start();
@@ -23,7 +24,8 @@ public class Main{
 
 		InetSocketAddress clientSocketAddress1 = new InetSocketAddress("localhost",2000);
 		InetSocketAddress clientSocketAddress2 = new InetSocketAddress("localhost",2001);
-		InetSocketAddress[] clients={clientSocketAddress1, clientSocketAddress2};
+		InetSocketAddress clientSocketAddress3 = new InetSocketAddress("localhost",2002);
+		InetSocketAddress[] clients={clientSocketAddress1, clientSocketAddress2, clientSocketAddress3};
 
 		InetSocketAddress routerSocketAddress1 = new InetSocketAddress("localhost",2010);
 		InetSocketAddress routerSocketAddress2 = new InetSocketAddress("localhost",2011);

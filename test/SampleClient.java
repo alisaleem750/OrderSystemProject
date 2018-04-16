@@ -33,9 +33,9 @@ public class SampleClient extends Mock implements Client{
 		/** Ali - below should be price, not instId */
 		int instid=RANDOM_NUM_GENERATOR.nextInt(3);
 		Instrument instrument=INSTRUMENTS[RANDOM_NUM_GENERATOR.nextInt(INSTRUMENTS.length)];
-		NewOrderSingle nos=new NewOrderSingle(size,instid,instrument);
+		NewOrderSingle nos=new NewOrderSingle((String)orderType,size,instid,instrument);
 		//show("sendOrder: id="+id+" size="+size+" instrument="+INSTRUMENTS[instid].toString());
-		show("sendOrder: id="+id+" size="+size+" instrument="+nos.instrument.toString());
+		show("sendOrder: id="+id+" size="+size+" instrument="+nos.instrument.toString()+ " type="+nos.type);
 		OUT_QUEUE.put(id,nos);
 		if(omConn.isConnected()){
 			ObjectOutputStream os=new ObjectOutputStream(omConn.getOutputStream());
@@ -93,10 +93,10 @@ public class SampleClient extends Mock implements Client{
 							case"35":MsgType=tag_value[1].charAt(0);
 								if(MsgType=='A')whatToDo=methods.newOrderSingleAcknowledgement;
 								break;
-							case"54"://doSomethingWithOrderBuyOrSell?
+							case"54":Integer.parseInt(tag_value[1]); break;
 							case"39":OrdStatus=tag_value[1].charAt(0);
 								if(OrdStatus==('A'))whatToDo=methods.newOrderSingleAcknowledgement;
-//								else if(OrdStatus=='1')whatToDo=methods.orderPartialFillAcknowledgement;
+								else if(OrdStatus=='1')whatToDo=methods.orderPartialFillAcknowledgement;
 								else if(OrdStatus=='2')whatToDo=methods.orderCompleteAcknowledgement;
 								break;
 						}
@@ -128,11 +128,11 @@ public class SampleClient extends Mock implements Client{
 	}
 
 	private void partialFill(int orderId) {
-		System.out.println("Order " + orderId + " partially filled.");
+		System.out.println("Order " + orderId + " for " + Thread.currentThread().getName() + " partially filled.");
 	}
 
 	private void orderCompleteAcknowledgement(int orderId) throws InterruptedException, IOException {
-		System.out.println("Order " + orderId + " is complete. Removing from queue.");
+		System.out.println("Order " + orderId + " for " + Thread.currentThread().getName() + " is complete. Removing order.");
 		OUT_QUEUE.remove(orderId);
 		if(OUT_QUEUE.isEmpty()){
 			finished = true;

@@ -33,11 +33,11 @@ public class Trader extends Thread implements TradeScreen{
 					//TODO check if we need to create each time. this will block if no data, but maybe we can still try to create it once instead of repeatedly
 					is=new ObjectInputStream(s);
 					api method=(api)is.readObject();
-					System.out.println(Thread.currentThread().getName()+" calling: "+method);
+//					System.out.println(Thread.currentThread().getName()+" calling: "+method);
 					switch(method){
 						case newOrder:newOrder(is.readInt(),(Order)is.readObject());break;
 						case price:price(is.readInt(),(Order)is.readObject());break;
-						case cross:is.readInt();is.readObject();break; //TODO
+						case cross:fill(is.readInt(),(Order)is.readObject());break; //TODO
 						case fill:fill(is.readInt(), (Order) is.readObject());break; //TODO
 					}
 				}else{
@@ -54,7 +54,7 @@ public class Trader extends Thread implements TradeScreen{
 	public synchronized void newOrder(int id,Order order) throws IOException, InterruptedException {
 		//TODO the order should go in a visual grid, but not needed for test purposes
 		orders.put(id, order);
-		System.out.println("T new order: " + id + " client: " + (orders.get(id).getClientId()+1) + " client order id: " + orders.get(id).clientOrderID + " size: " + orders.get(id).sizeRemaining() + "/" +orders.get(id).size);
+		System.out.println(Thread.currentThread().getName()+ " received new " + order.type + " order with ID " + id + " from client " + (orders.get(id).getClientId()+1) + " order size remaining: [" + orders.get(id).sizeRemaining() + "/" +orders.get(id).size+"]");
 		acceptOrder(id);
 	}
 
@@ -74,9 +74,8 @@ public class Trader extends Thread implements TradeScreen{
 		os.writeInt(id);
 		os.writeObject(o);
 		os.flush();
-		System.out.println("T order: " + id + " client: " + (orders.get(id).getClientId()+1) + " client order id: " + orders.get(id).clientOrderID + " size: " + orders.get(id).sizeRemaining() + "/" +orders.get(id).size);
+		System.out.println(Thread.currentThread().getName()+ " filling order " + id + " from client " + (orders.get(id).getClientId()+1) + " order size remaining: [" + orders.get(id).sizeRemaining() + "/" +orders.get(id).size +"]");
 		if (o.getOrderStatus() == '2') {
-			System.out.println("Trader removed order");
 			orders.remove(id);
 			if(orders.isEmpty()){
 				finished=true;
