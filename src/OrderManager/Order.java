@@ -20,8 +20,9 @@ public class Order implements Serializable{
 	char OrdStatus='A'; //OrdStatus is Fix 39, 'A' is 'Pending New'
 	//Status state;
 
-	public Order(int clientId, int ClientOrderID, Instrument instrument, int size){
-		this.clientOrderID =ClientOrderID;
+	public Order(int id, int clientId, int ClientOrderID, Instrument instrument, int size){
+		this.id = id;
+	    this.clientOrderID =ClientOrderID;
 		this.size=size;
 		this.clientId=clientId;
 		this.instrument=instrument;
@@ -48,7 +49,7 @@ public class Order implements Serializable{
 		return totalSizeOfSlices;
 	}
 	public int newSlice(int sliceSize){
-		slices.add(new Order(id, clientOrderID,instrument,sliceSize));
+		slices.add(new Order(id, clientId, clientOrderID,instrument,sliceSize));
 		return slices.size()-1;
 	}
 

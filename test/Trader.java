@@ -14,6 +14,7 @@ public class Trader extends Thread implements TradeScreen{
 	private HashMap<Integer,Order> orders=new HashMap<Integer,Order>();
 	private static Socket omConn;
 	private int port;
+	private boolean finished;
 	Trader(String name,int port){
 		this.setName(name);
 		this.port=port;
@@ -27,7 +28,7 @@ public class Trader extends Thread implements TradeScreen{
 
 //			is=new ObjectInputStream( omConn.getInputStream());
 			InputStream s=omConn.getInputStream(); //if i try to create an objectinputstream before we have data it will block
-			while(true){ /** fix this */
+			while(!finished){ /** fix this */
 				if(0<s.available()){
 					//TODO check if we need to create each time. this will block if no data, but maybe we can still try to create it once instead of repeatedly
 					is=new ObjectInputStream(s);
@@ -52,7 +53,6 @@ public class Trader extends Thread implements TradeScreen{
 	@Override
 	public synchronized void newOrder(int id,Order order) throws IOException, InterruptedException {
 		//TODO the order should go in a visual grid, but not needed for test purposes
-		Thread.sleep(2134);
 		orders.put(id, order);
 		System.out.println("T new order: " + id + " client: " + (orders.get(id).getClientId()+1) + " client order id: " + orders.get(id).clientOrderID + " size: " + orders.get(id).sizeRemaining() + "/" +orders.get(id).size);
 		acceptOrder(id);
@@ -69,26 +69,35 @@ public class Trader extends Thread implements TradeScreen{
 	public synchronized void fill(int id, Order o) throws IOException, InterruptedException {
 		orders.remove(id);
 		orders.put(id, o);
-		os=new ObjectOutputStream(omConn.getOutputStream());
+        System.out.println("T order: " + id + " client: " + (orders.get(id).getClientId()+1) + " client order id: " + orders.get(id).clientOrderID + " size: " + orders.get(id).sizeRemaining() + "/" +orders.get(id).size);
+		if (o.getOrderStatus() == '2') {
+			System.out.println("Trader removed order");
+			orders.remove(id);
+			if(orders.isEmpty()){
+				finished=true;
+			}
+		}
+        os=new ObjectOutputStream(omConn.getOutputStream());
 		os.writeObject("updateOrder");
 		os.writeInt(id);
 		os.writeObject(o);
 		os.flush();
-		if (o.getOrderStatus() == '2') {
-			orders.remove(id);
-		}
 	}
 
 	@Override
-	public void price(int id,Order o) throws InterruptedException, IOException {
+	public synchronized void price(int id,Order o) throws InterruptedException, IOException {
 		//TODO should update the trade screen
 //		Thread.sleep(234);
-		System.out.println("T order: " + id + " client: " + (orders.get(id).getClientId()+1) + " client order id: " + orders.get(id).clientOrderID + " size: " + orders.get(id).sizeRemaining() + "/" +orders.get(id).size);
 		/*if (orders.get(id).sizeRemaining() < 20) {
 			System.out.println("order filled");
 			return;
 		}*/
-		sliceOrder(id,orders.get(id).sizeRemaining()/2);
+		if(o.sizeRemaining() < o.size/2){
+            sliceOrder(id,orders.get(id).sizeRemaining());
+        } else {
+            sliceOrder(id,orders.get(id).sizeRemaining()/2);
+        }
+
 	}
 
 	@Override

@@ -136,17 +136,17 @@ public class SampleClient extends Mock implements Client{
 		OUT_QUEUE.remove(orderId);
 		BackToOrderManager();
 		if(OUT_QUEUE.isEmpty()){
-			//Thread.currentThread().interrupt();
+			Thread.currentThread().interrupt();
 		}
 	}
 
 	private void BackToOrderManager() throws IOException {
 		ObjectOutputStream os = new ObjectOutputStream(omConn.getOutputStream());
-		os.writeObject("nextTrade");
+		os.writeObject("tradeComplete");
 
 	}
 
-	private void newOrderSingleAcknowledgement(int OrderId){
+	private synchronized void newOrderSingleAcknowledgement(int OrderId){
 		System.out.println(Thread.currentThread().getName()+" called newOrderSingleAcknowledgement");
 		// Update the order status to new.
 		NewOrderSingle nos = OUT_QUEUE.get(OrderId);
