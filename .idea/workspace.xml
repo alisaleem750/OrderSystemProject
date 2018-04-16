@@ -5,21 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="83ae077c-67fd-45d6-9334-7348193a33e7" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/out/production/OrderSystemProject/OrderManager/OrderManager.class" afterPath="$PROJECT_DIR$/out/production/OrderSystemProject/OrderManager/OrderManager.class" />
-      <change beforePath="$PROJECT_DIR$/out/production/OrderSystemProject/OrderRouter/Router$api.class" afterPath="$PROJECT_DIR$/out/production/OrderSystemProject/OrderRouter/Router$api.class" />
-      <change beforePath="$PROJECT_DIR$/out/test/OrderSystemProject/SampleClient$1.class" afterPath="$PROJECT_DIR$/out/test/OrderSystemProject/SampleClient$1.class" />
-      <change beforePath="$PROJECT_DIR$/out/test/OrderSystemProject/SampleClient$methods.class" afterPath="$PROJECT_DIR$/out/test/OrderSystemProject/SampleClient$methods.class" />
-      <change beforePath="$PROJECT_DIR$/out/test/OrderSystemProject/SampleClient.class" afterPath="$PROJECT_DIR$/out/test/OrderSystemProject/SampleClient.class" />
-      <change beforePath="$PROJECT_DIR$/out/test/OrderSystemProject/SampleRouter$1.class" afterPath="$PROJECT_DIR$/out/test/OrderSystemProject/SampleRouter$1.class" />
-      <change beforePath="$PROJECT_DIR$/out/test/OrderSystemProject/SampleRouter.class" afterPath="$PROJECT_DIR$/out/test/OrderSystemProject/SampleRouter.class" />
-      <change beforePath="$PROJECT_DIR$/out/test/OrderSystemProject/Trader$1.class" afterPath="$PROJECT_DIR$/out/test/OrderSystemProject/Trader$1.class" />
-      <change beforePath="$PROJECT_DIR$/out/test/OrderSystemProject/Trader.class" afterPath="$PROJECT_DIR$/out/test/OrderSystemProject/Trader.class" />
       <change beforePath="$PROJECT_DIR$/src/OrderManager/OrderManager.java" afterPath="$PROJECT_DIR$/src/OrderManager/OrderManager.java" />
-      <change beforePath="$PROJECT_DIR$/src/OrderRouter/Router.java" afterPath="$PROJECT_DIR$/src/OrderRouter/Router.java" />
-      <change beforePath="$PROJECT_DIR$/test/SampleClient.java" afterPath="$PROJECT_DIR$/test/SampleClient.java" />
-      <change beforePath="$PROJECT_DIR$/test/SampleRouter.java" afterPath="$PROJECT_DIR$/test/SampleRouter.java" />
-      <change beforePath="$PROJECT_DIR$/test/Trader.java" afterPath="$PROJECT_DIR$/test/Trader.java" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -97,8 +84,8 @@
           <file leaf-file-name="OrderManager.java" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/OrderManager/OrderManager.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="0">
-                  <caret line="240" column="52" lean-forward="false" selection-start-line="240" selection-start-column="52" selection-end-line="240" selection-end-column="52" />
+                <state relative-caret-position="247">
+                  <caret line="251" column="29" lean-forward="true" selection-start-line="251" selection-start-column="29" selection-end-line="251" selection-end-column="29" />
                   <folding>
                     <element signature="imports" expanded="true" />
                   </folding>
@@ -535,7 +522,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
@@ -546,7 +532,7 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="FLOATING" type="FLOATING" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" x="92" y="92" width="1736" height="856" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24673913" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24673913" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32934782" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -609,7 +595,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="15" />
+      <option name="time" value="16" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -1048,8 +1034,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/OrderManager/OrderManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="240" column="52" lean-forward="false" selection-start-line="240" selection-start-column="52" selection-end-line="240" selection-end-column="52" />
+        <state relative-caret-position="247">
+          <caret line="251" column="29" lean-forward="true" selection-start-line="251" selection-start-column="29" selection-end-line="251" selection-end-column="29" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

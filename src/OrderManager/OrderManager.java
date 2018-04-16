@@ -239,12 +239,20 @@ public class OrderManager {
                 System.out.println("update order: delete Order");
             } else {
 //                sliceOrder(id, o.sizeRemaining());
-                price(id, o);
+				Order order = randomOrder();
+				id = order.id;
+                price(id, order);
             }
         }
     }
 
-    public void sliceOrder(int id,int sliceSize) throws IOException, InterruptedException {
+	private Order randomOrder() {
+		Random rand = new Random();
+		int i = rand.nextInt(orders.size());
+		return orders.get(i);
+	}
+
+	public void sliceOrder(int id,int sliceSize) throws IOException, InterruptedException {
         Order o=orders.get(id);
         //slice the order. We have to check this is a valid size.
         //Order has a list of slices, and a list of fills, each slice is a childorder and each fill is associated with either a child order or the original order
